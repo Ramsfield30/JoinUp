@@ -125,6 +125,10 @@ nav{
     gap: 20px;
     padding: 10px 20px;
     overflow-x: auto;
+    scrollbar-width: none;
+}
+nav::-webkit-scrollbar {
+    display: none;
 }
 nav a{
     text-decoration: none;
