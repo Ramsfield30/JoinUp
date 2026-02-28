@@ -275,6 +275,10 @@ nav a.active{
     backdrop-filter: blur(5px);
     box-shadow: 0 0 15px rgba(37, 162, 68, 0.7);
 }
+[data-theme="light"] .search-btn {
+background: linear-gradient(135deg, #25a244, #00d4aa);
+    box-shadow: 0 0 15px rgba(37, 162, 68, 0.7);
+}
 .hero-buttons {
     display: flex;
     gap: 10px;
