@@ -561,3 +561,7 @@ background: linear-gradient(135deg, #25a244, #00d4aa);
     color: gray;
     margin: 0 10px;
 }
+.submit-note {
+    text-align: content;
+    color: gray;
+}
