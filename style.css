@@ -483,3 +483,81 @@ background: linear-gradient(135deg, #25a244, #00d4aa);
 [data-theme="light"] .bottom-nav {
     background: rgba(255, 255, 255, 0.5);
 }
+.submit-title {
+    font-size: 20px;
+    color: var(--text-primary);
+    margin: 0 0 5px;
+    text-align: center;
+}
+.submit-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 15px;
+}
+.submit-card input,
+.submit-card select {
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--text-primary);
+    font-size: 14px;
+    outline: none;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+}
+.submit-card input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+[data-theme="dark"] .submit-card input,
+[data-theme="dark"] .submit-card select {
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+.submit-card label {
+    color: var(--text-primary);
+    font-size: 14px;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+.submit-description {
+    color: gray;
+    font-size: 14px;
+    text-align: center;
+    margin: 0 0 20px;
+    line-height: 1.5;
+}
+.submit-form-btn {
+    display: block;
+    width: 80%;
+    padding: 14px;
+    border: none;
+    border-radius: 25px;
+    background: linear-gradient(90deg, #2A80E2, #1BBC9B);
+    color: white;
+    font-size: 16px;
+    font-weight: blod;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(37, 162, 68, 0.7);
+    
+    transition: transform 0.2s ease;
+    margin: 0 auto;
+}
+.submit-form-btn:hover {
+    transform: scale(1.02);
+}
+.submit-footer {
+    text-align: center;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+.footer-links a {
+    text-decoration: none;
+    color: gray;
+    margin: 0 10px;
+}
