@@ -569,3 +569,20 @@ nav a.active{
 [data-theme="light"] .nav-item.active {
     color: #25a244;
 }
+.file-upload {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 15px;
+    border-radius: 10px;
+    border: 2px dashed rgba(255, 255, 255, 0.3);
+    color: var(--text-primary);
+    cursor: pointer;
+    margin-bottom: 15px;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.file-upload i {
+    font-size: 20px;
+    color: #0088cc;
+}
