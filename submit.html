@@ -27,15 +27,15 @@
        <div class="submit-card">
        <form>
            <label>Group/Channel Name</label>
-           <input type="text" name="group-name" placeholder="Enter your group/channel name">
+           <input type="text" name="group-name" placeholder="Enter your group/channel name" required>
 <label>Select Platform</label>
-<select id="platform" name="platform">
+<select id="platform" name="platform" required>
     <option value="">-- Select Platform --</option>
     <option value="whatsapp">WhatsApp</option>
     <option value="telegram">Telegram</option>
 </select>
 <label>Select Category</label>
-<select id="category" name="platform">
+<select id="category" name="platform" required>
     <option value="">--Select Category--</option>
     <option value="edu">Education</option>
     <option value="tech">Tech</option>
@@ -45,11 +45,11 @@
     <option value="fun">Fun/Random</option>
 </select>
        <label>Group Link</label>
-       <input type="url" placeholder="https://....." name="group-link">
+       <input type="url" placeholder="https://....." name="group-link" required>
        <label>Your Email</label>
        <input type="email" placeholder="Enter your email for notifications.." name="email">
        <label>Description</label>
-<textarea name="description" placeholder="Describe your group/channel - topics, purpose, what members can expect..." rows="4"></textarea>
+<textarea name="description" placeholder="Describe your group/channel - topics, purpose, what members can expect..." rows="4" required></textarea>
 <label>Group/Channel Image</label>
 <input type="file" name="image" accept="image/*">
     <input type="hidden" name="_next" value="https://joinup-two.vercel.app/submit.html?success=true">
