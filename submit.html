@@ -51,7 +51,11 @@
        <label>Description</label>
 <textarea name="description" placeholder="Describe your group/channel - topics, purpose, what members can expect..." rows="4" required></textarea>
 <label>Group/Channel Image</label>
-<input type="file" name="image" accept="image/*">
+<label class="file-upload">
+    <i class="fa-solid fa-image"></i>
+    <span>Click to upload image</span>
+    <input type="file" name="image" accept="image/*" hidden>
+</label>
     <input type="hidden" name="_next" value="https://joinup-two.vercel.app/submit.html?success=true">
        <button type="submit" class="submit-form-btn">Submit Group</button>
        <p class="submit-note">Our team will review your submission before it goes live</p>
