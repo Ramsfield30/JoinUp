@@ -14,23 +14,18 @@ function updateIcon(theme) {
 function toggleTheme() {
     const currentTheme = htmlElement.getAttribute('data-theme');
     const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-    
     themeIcon.style.transform = 'rotate(360deg)';
     themeWave.classList.add('active');
-    
     setTimeout(() => {
         htmlElement.setAttribute('data-theme', newTheme);
         updateIcon(newTheme);
     }, 50);
-    
     setTimeout(() => {
         themeIcon.style.transform = 'rotate(0)';
     }, 300);
-    
     setTimeout(() => {
         themeWave.classList.remove('active');
     }, 600);
-    
     localStorage.setItem('theme', newTheme);
 }
 
@@ -40,27 +35,27 @@ updateIcon(savedTheme);
 
 themeToggle.addEventListener('click', toggleTheme);
 
-const submitForm = document.querySelector('.submit-form-btn');
 const form = document.querySelector('form');
-
 if (form) {
-    form.addEventListener('submit', function(e) {
-        submitForm.textContent = 'Submitting...';
-        submitForm.disabled = true;
-        submitForm.style.opacity = '0.7';
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const btn = document.querySelector('.submit-form-btn');
+        btn.textContent = 'Submitting...';
+        btn.disabled = true;
+        const response = await fetch('https://formspree.io/f/mkovaygp', {
+            method: 'POST',
+            body: new FormData(form),
+            headers: { 'Accept': 'application/json' }
+        });
+        if (response.ok) {
+            form.innerHTML = `
+                <div style="text-align:center; padding: 30px;">
+                    <i class="fa-solid fa-circle-check" style="font-size:60px; color:#25a244;"></i>
+                    <h2 style="color:var(--text-primary); margin-top:15px;">Successfully Submitted!</h2>
+                    <p style="color:gray;">Our team will review your submission shortly.</p>
+                    <a href="index.html" style="color:#25a244;">← Back to Home</a>
+                </div>
+            `;
+        }
     });
-}
-
-if (window.location.search.includes('success=true')) {
-    const form = document.querySelector('form');
-    if (form) {
-        form.innerHTML = `
-            <div style="text-align:center; padding: 30px;">
-                <i class="fa-solid fa-circle-check" style="font-size:60px; color:#25a244;"></i>
-                <h2 style="color:var(--text-primary); margin-top:15px;">Successfully Submitted!</h2>
-                <p style="color:gray;">Our team will review your submission shortly.</p>
-                <a href="index.html" style="color:#25a244;">← Back to Home</a>
-            </div>
-        `;
-    }
 }
