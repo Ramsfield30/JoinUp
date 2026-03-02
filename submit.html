@@ -25,17 +25,17 @@
        <h1 class="submit-title">Submit Your Group/Channel</h1>
        <p class="submit-description">Share your Telegram or WhatsApp group/channel with the world. Fill out the form to post your group/channel and attract new members or followers</p>
        <div class="submit-card">
-       <form action="">
+       <form action="https://formspree.io/f/mkovaygp" method="POST">
            <label>Group/Channel Name</label>
-<input type="text" placeholder="Enter your group/channel name">
+           <input type="text" name="group-name" placeholder="Enter your group/channel name">
 <label>Select Platform</label>
-<select id="platform">
+<select id="platform" name="platform">
     <option value="">-- Select Platform --</option>
     <option value="whatsapp">WhatsApp</option>
     <option value="telegram">Telegram</option>
 </select>
 <label>Select Category</label>
-<select id="category">
+<select id="category" name="platform">
     <option value="">--Select Category--</option>
     <option value="edu">Education</option>
     <option value="tech">Tech</option>
@@ -45,12 +45,13 @@
     <option value="fun">Fun/Random</option>
 </select>
        <label>Group Link</label>
-       <input type="url" placeholder="https://.....">
+       <input type="url" placeholder="https://....." name="group-link">
        <label>Your Email</label>
-       <input type="email" placeholder="Enter your email for notifications..">
+       <input type="email" placeholder="Enter your email for notifications.." name="email">
        <button type="submit" class="submit-form-btn">Submit Group</button>
        <p class="submit-note">Our team will review your submission before it goes live</p>
        </form>
+       <input type="hidden" name="_next" value="https://joinup-two.vercel.app/submit.html?success=true">
        </div>
      </main>
      <footer class="submit-footer">

@@ -39,3 +39,28 @@ htmlElement.setAttribute('data-theme', savedTheme);
 updateIcon(savedTheme);
 
 themeToggle.addEventListener('click', toggleTheme);
+
+const submitForm = document.querySelector('.submit-form-btn');
+const form = document.querySelector('form');
+
+if (form) {
+    form.addEventListener('submit', function(e) {
+        submitForm.textContent = 'Submitting...';
+        submitForm.disabled = true;
+        submitForm.style.opacity = '0.7';
+    });
+}
+
+if (window.location.search.includes('success=true')) {
+    const form = document.querySelector('form');
+    if (form) {
+        form.innerHTML = `
+            <div style="text-align:center; padding: 30px;">
+                <i class="fa-solid fa-circle-check" style="font-size:60px; color:#25a244;"></i>
+                <h2 style="color:var(--text-primary); margin-top:15px;">Successfully Submitted!</h2>
+                <p style="color:gray;">Our team will review your submission shortly.</p>
+                <a href="index.html" style="color:#25a244;">← Back to Home</a>
+            </div>
+        `;
+    }
+}
