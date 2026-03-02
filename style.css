@@ -232,6 +232,7 @@ nav a.active{
 .hero {
     text-align: center;
     padding: 5px 20px 30px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.8);
 }
 .hero-logo {
     height: 120px;
@@ -242,16 +243,19 @@ nav a.active{
     font-size: 20px;
     color: var(--text-primary);
     margin: 0 0 5px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.8);
 }
 .hero-highlight {
     font-size: 18px;
     color: #0088cc;
     margin: 5px 0;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.8);
 }
 .hero-tagline {
     font-size: 14px;
     color: gray;
     margin: 5px 0;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.8);
 }
 .hero-search {
     display: flex;
