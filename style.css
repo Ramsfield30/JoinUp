@@ -75,11 +75,10 @@ header div{
     margin-left: -10px;
 }
 header {
-    border-radius: 5px;
     position: sticky;
     top: 0;
     z-index: 100;
-    padding: 1px 5px;
+    padding: 8px 15px;
     background: rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
@@ -139,7 +138,6 @@ nav a{
 }
 nav a.active{
     color: #25a244;
-    border-bottom: 2px solid #25a244;
 }
 .search-bar{
     display: flex;
@@ -274,17 +272,14 @@ nav a.active{
     outline: none;
 }
 .search-btn {
-    background: rgba(0, 136, 204, 0.6);
+    background: linear-gradient(135deg, #0088cc, #25a244);
+    box-shadow: 0 0 15px rgba(0, 136, 204, 0.5);
     color: white;
     border: none;
     padding: 12px 20px;
     font-weight: bold;
     cursor: pointer;
     backdrop-filter: blur(5px);
-    box-shadow: 0 0 15px rgba(37, 162, 68, 0.7);
-}
-[data-theme="light"] .search-btn {
-background: linear-gradient(135deg, #25a244, #00d4aa);
     box-shadow: 0 0 15px rgba(37, 162, 68, 0.7);
 }
 .hero-buttons {
@@ -294,7 +289,8 @@ background: linear-gradient(135deg, #25a244, #00d4aa);
     margin-top: 15px;
 }
 .btn-started {
-    background: linear-gradient(135deg, #0088cc, #00d4ff);
+    background: linear-gradient(135deg, #0088cc, #25a244);
+    box-shadow: 0 0 15px rgba(0, 136, 204, 0.5);
     color: white;
     padding: 12px 25px;
     border-radius: 25px;
@@ -302,10 +298,6 @@ background: linear-gradient(135deg, #25a244, #00d4aa);
     font-weight: bold;
     box-shadow: 0 0 15px rgba(0, 136, 204, 0.7);
     backdrop-filter: blur(5px);
-}
-[data-theme="light"] .btn-started {
-    background: linear-gradient(135deg, #25a244, #00d4aa);
-    box-shadow: 0 0 15px rgba(37, 162, 68, 0.7);
 }
 
 .btn-submit {
@@ -477,7 +469,7 @@ background: linear-gradient(135deg, #25a244, #00d4aa);
     align-items: center;
     justify-content: center;
     margin-bottom: 15px;
-    box-shadow: 0 0 15px rgba(37, 162, 68, 0.7);
+    box-shadow: 0 0 15px rgba(37, 162, 68, 0.2);
     flex-shrink: 0;
 }
 .nav-add i {
@@ -569,4 +561,11 @@ background: linear-gradient(135deg, #25a244, #00d4aa);
 .submit-note {
     text-align: center;
     color: gray;
+}
+[data-theme="light"] .nav-item {
+    color: #555555;
+}
+
+[data-theme="light"] .nav-item.active {
+    color: #25a244;
 }
