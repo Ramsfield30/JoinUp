@@ -48,10 +48,15 @@
        <input type="url" placeholder="https://....." name="group-link">
        <label>Your Email</label>
        <input type="email" placeholder="Enter your email for notifications.." name="email">
+       <label>Description</label>
+<textarea name="description" placeholder="Describe your group/channel - topics, purpose, what members can expect..." rows="4"></textarea>
+<label>Group/Channel Image</label>
+<input type="file" name="image" accept="image/*">
+    <input type="hidden" name="_next" value="https://joinup-two.vercel.app/submit.html?success=true">
        <button type="submit" class="submit-form-btn">Submit Group</button>
        <p class="submit-note">Our team will review your submission before it goes live</p>
        </form>
-       <input type="hidden" name="_next" value="https://joinup-two.vercel.app/submit.html?success=true">
+   
        </div>
      </main>
      <footer class="submit-footer">

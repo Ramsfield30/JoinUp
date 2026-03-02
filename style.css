@@ -497,7 +497,7 @@ background: linear-gradient(135deg, #25a244, #00d4aa);
     margin: 20px 15px;
 }
 .submit-card input,
-.submit-card select {
+.submit-card select, .submit-card textarea {
     width: 100%;
     padding: 12px 15px;
     border-radius: 10px;
@@ -513,7 +513,8 @@ background: linear-gradient(135deg, #25a244, #00d4aa);
 }
 
 [data-theme="dark"] .submit-card input,
-[data-theme="dark"] .submit-card select {
+[data-theme="dark"] .submit-card select, 
+[data-theme="dark"]  .submit-card textarea{
     background: rgba(255, 255, 255, 0.15);
     color: #ffffff;
     border: 1px solid rgba(255, 255, 255, 0.3);
@@ -541,7 +542,7 @@ background: linear-gradient(135deg, #25a244, #00d4aa);
     background: linear-gradient(90deg, #2A80E2, #1BBC9B);
     color: white;
     font-size: 16px;
-    font-weight: blod;
+    font-weight: bold;
     cursor: pointer;
     box-shadow: 0 0 15px rgba(37, 162, 68, 0.7);
     
@@ -562,6 +563,6 @@ background: linear-gradient(135deg, #25a244, #00d4aa);
     margin: 0 10px;
 }
 .submit-note {
-    text-align: content;
+    text-align: center;
     color: gray;
 }
