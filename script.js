@@ -40,7 +40,7 @@ if (form) {
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
         const btn = document.querySelector('.submit-form-btn');
-        btn.textContent = 'Submitting...';
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting...';
         btn.disabled = true;
         const response = await fetch('https://formspree.io/f/mkovaygp', {
             method: 'POST',
