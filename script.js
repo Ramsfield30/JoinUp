@@ -59,3 +59,36 @@ if (form) {
         }
     });
 }
+// Fetch groups from Supabase
+async function loadGroups() {
+    const { data, error } = await db
+        .from('groups')
+        .select('*')
+        .eq('status', 'approved');
+
+    if (error) {
+        console.log('Error:', error);
+        return;
+    }
+
+    const container = document.querySelector('.categories');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    data.forEach(group => {
+        container.innerHTML += `
+            <div class="card">
+                <div class="card-img"></div>
+                <span class="badge ${group.platform}">${group.platform}</span>
+                <h3>${group.name}</h3>
+                <p>${group.description}</p>
+                <div class="card-buttons">
+                    <a href="${group.link}" target="_blank">Join Now</a>
+                </div>
+            </div>
+        `;
+    });
+}
+
+loadGroups();
