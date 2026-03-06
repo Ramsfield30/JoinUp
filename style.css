@@ -667,9 +667,6 @@ nav a.active{
     font-size: 12px;
     margin: 0;
 }
-main {
-    padding-bottom: 80px;
-}
 .policy-notes {
     background: rgba(255, 255, 255, 0.05);
     border-radius: 10px;
@@ -694,5 +691,6 @@ main {
 }
 
 main {
-    animation: fadeIn 0.1s ease;
+    animation: fadeIn 1s ease;
+      padding-bottom: 80px;
 }
