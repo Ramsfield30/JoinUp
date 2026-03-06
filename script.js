@@ -92,3 +92,10 @@ async function loadGroups() {
 }
 
 loadGroups();
+async function testSupabase() {
+    const { data, error } = await db
+        .from('groups')
+        .select('*');
+    
+    alert('Data: ' + JSON.stringify(data) + ' Error: ' + JSON.stringify(error));
+}
