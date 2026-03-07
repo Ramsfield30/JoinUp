@@ -91,7 +91,7 @@ async function loadGroups() {
 
     data.forEach(group => {
         container.innerHTML += `
-            <div class="card">
+            <div class="card" data-category="${group.category}">
                 <div class="card-img"></div>
                 <span class="badge ${group.platform}">${group.platform}</span>
                 <h3>${group.name}</h3>
@@ -102,9 +102,40 @@ async function loadGroups() {
             </div>
         `;
     });
+
+    setupFilter();
 }
 
 loadGroups();
+
+// Setup filter after cards load
+function setupFilter() {
+    const navLinks = document.querySelectorAll('header nav a');
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            navLinks.forEach(l => l.classList.remove('active'));
+            this.classList.add('active');
+            const category = this.getAttribute('data-category');
+            filterGroups(category);
+        });
+    });
+}
+
+function filterGroups(category) {
+    const cards = document.querySelectorAll('.categories .card');
+    cards.forEach(card => {
+        if (category === 'all') {
+            card.style.display = 'block';
+        } else {
+            if (card.getAttribute('data-category') === category) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        }
+    });
+}
 
 // Explore page - load by category
 const categories = [
