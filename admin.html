@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JoinUp Admin Panel</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <!-- Password Screen -->
+    <div id="login-screen" style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; padding:20px;">
+        <img src="joinup-logo.png" style="height:80px; margin-bottom:20px;">
+        <h2 style="color:var(--text-primary); margin-bottom:20px;">Admin Login</h2>
+        <input type="password" id="admin-password" placeholder="Enter password" style="padding:12px 20px; border-radius:25px; border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.1); color:var(--text-primary); font-size:16px; outline:none; width:80%; box-sizing:border-box; margin-bottom:15px;">
+        <button onclick="checkPassword()" style="background:linear-gradient(135deg, #0088cc, #25a244); color:white; border:none; padding:12px 30px; border-radius:25px; font-size:16px; font-weight:bold; cursor:pointer; width:80%;">Login</button>
+        <p id="login-error" style="color:red; margin-top:10px; display:none;">Wrong password!</p>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="admin-panel" style="display:none;">
+        <header>
+            <div class="header-top">
+                <img class="logo" src="joinup-logo.png" alt="JoinUp Logo">
+                <button onclick="logout()" style="background:red; color:white; border:none; padding:8px 15px; border-radius:20px; cursor:pointer; font-weight:bold;">Logout</button>
+            </div>
+        </header>
+        <main>
+            <div style="padding:15px;">
+                <h2 style="color:var(--text-primary);">⏳ Pending Groups</h2>
+                <div id="pending-container">
+                    <p style="color:gray;">Loading...</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase.js"></script>
+    <script>
+        const ADMIN_PASSWORD = 'Ramsfield302007';
+
+        function checkPassword() {
+            const input = document.getElementById('admin-password').value;
+            if (input === ADMIN_PASSWORD) {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('admin-panel').style.display = 'block';
+                loadPending();
+            } else {
+                document.getElementById('login-error').style.display = 'block';
+            }
+        }
+
+        function logout() {
+            document.getElementById('login-screen').style.display = 'flex';
+            document.getElementById('admin-panel').style.display = 'none';
+            document.getElementById('admin-password').value = '';
+        }
+
+        async function loadPending() {
+            const { data, error } = await db
+                .from('groups')
+                .select('*')
+                .eq('status', 'pending');
+
+            const container = document.getElementById('pending-container');
+
+            if (!data || data.length === 0) {
+                container.innerHTML = '<p style="color:gray;">No pending groups! ✅</p>';
+                return;
+            }
+
+            container.innerHTML = '';
+            data.forEach(group => {
+                container.innerHTML += `
+                    <div style="background:rgba(255,255,255,0.1); border-radius:15px; padding:15px; margin-bottom:15px;">
+                        <h3 style="color:var(--text-primary); margin:0 0 5px;">${group.name}</h3>
+                        <p style="color:gray; font-size:13px; margin:3px 0;">📱 ${group.platform} • 🏷️ ${group.category}</p>
+                        <p style="color:gray; font-size:13px; margin:3px 0;">🔗 <a href="${group.link}" target="_blank" style="color:#0088cc;">${group.link}</a></p>
+                        <p style="color:gray; font-size:13px; margin:3px 0 10px;">📝 ${group.description}</p>
+                        <div style="display:flex; gap:10px;">
+                            <button onclick="approveGroup(${group.id})" style="background:#25a244; color:white; border:none; padding:8px 20px; border-radius:20px; cursor:pointer; font-weight:bold; flex:1;">✅ Approve</button>
+                            <button onclick="rejectGroup(${group.id})" style="background:red; color:white; border:none; padding:8px 20px; border-radius:20px; cursor:pointer; font-weight:bold; flex:1;">❌ Reject</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        async function approveGroup(id) {
+            const { error } = await db
+                .from('groups')
+                .update({ status: 'approved' })
+                .eq('id', id);
+
+            if (!error) loadPending();
+        }
+
+        async function rejectGroup(id) {
+            const { error } = await db
+                .from('groups')
+                .delete()
+                .eq('id', id);
+
+            if (!error) loadPending();
+        }
+
+        // Theme
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+
+        // Allow Enter key on password
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('admin-password').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') checkPassword();
+            });
+        });
+    </script>
+</body>
+</html>
