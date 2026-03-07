@@ -435,6 +435,7 @@ nav a.active{
     text-align: left;
 }
 .bottom-nav {
+    overflow: visible;
     position: fixed;
     bottom: 0;
     left: 0;
@@ -442,9 +443,10 @@ nav a.active{
     display: flex;
     justify-content: space-evenly;
     align-items: center;
-    padding: 10px 0;
+    padding: 10px 0 20px;
     background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(15px);
+    border-radius: 25px 25px 0 0;
     z-index: 100;
 }
 .nav-item {
@@ -460,19 +462,23 @@ nav a.active{
     font-size: 20px;
 }
 .nav-item.active {
-    color: #25a244;
+    background: linear-gradient(135deg, #0088cc, #25a244);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 .nav-add {
-    background: #25a244;
+    background: linear-gradient(135deg, #0088cc, #25a244);
     width: 60px;
     height: 50px;
-    border-radius: 100%;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 15px;
-    box-shadow: 0 0 15px rgba(37, 162, 68, 0.2);
+    box-shadow: 0 0 20px rgba(37, 162, 68, 0.5);
     flex-shrink: 0;
+    border: 4px solid rgba(0,0,0,0.3);
+    position: relative;
+    top: -25px;
 }
 .nav-add i {
     color: white;
