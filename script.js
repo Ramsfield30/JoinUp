@@ -35,6 +35,7 @@ updateIcon(savedTheme);
 
 themeToggle.addEventListener('click', toggleTheme);
 
+// Submit form to Supabase
 const form = document.querySelector('form');
 if (form) {
     form.addEventListener('submit', async function(e) {
@@ -42,12 +43,19 @@ if (form) {
         const btn = document.querySelector('.submit-form-btn');
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting...';
         btn.disabled = true;
-        const response = await fetch('https://formspree.io/f/mkovaygp', {
-            method: 'POST',
-            body: new FormData(form),
-            headers: { 'Accept': 'application/json' }
-        });
-        if (response.ok) {
+
+        const { error } = await db
+            .from('groups')
+            .insert({
+                name: form['group-name'].value,
+                platform: form['platform'].value,
+                category: form['category'].value,
+                link: form['group-link'].value,
+                description: form['description'].value,
+                status: 'pending'
+            });
+
+        if (!error) {
             form.innerHTML = `
                 <div style="text-align:center; padding: 30px;">
                     <i class="fa-solid fa-circle-check" style="font-size:60px; color:#25a244;"></i>
@@ -56,10 +64,15 @@ if (form) {
                     <a href="index.html" style="color:#25a244;">← Back to Home</a>
                 </div>
             `;
+        } else {
+            btn.innerHTML = 'Submit Group';
+            btn.disabled = false;
+            alert('Something went wrong! Please try again.');
         }
     });
 }
-// Fetch groups from Supabase
+
+// Fetch groups for homepage
 async function loadGroups() {
     const { data, error } = await db
         .from('groups')
@@ -92,10 +105,61 @@ async function loadGroups() {
 }
 
 loadGroups();
-async function testSupabase() {
+
+// Explore page - load by category
+const categories = [
+  { name: 'Crypto', value: 'crypto', icon: 'fa-bitcoin-sign' },
+  { name: 'Tech', value: 'tech', icon: 'fa-microchip' },
+  { name: 'Education', value: 'education', icon: 'fa-graduation-cap' },
+  { name: 'Business', value: 'business', icon: 'fa-briefcase' },
+  { name: 'Gaming', value: 'gaming', icon: 'fa-gamepad' },
+  { name: 'Religious', value: 'religious', icon: 'fa-hands-praying' },
+  { name: 'Football', value: 'football', icon: 'fa-futbol' },
+  { name: 'Fun', value: 'fun', icon: 'fa-face-laugh' },
+  { name: 'Entertainment', value: 'entertainment', icon: 'fa-tv' },
+];
+
+async function loadExplore() {
+  const container = document.getElementById('explore-container');
+  if (!container) return;
+
+  for (const cat of categories) {
     const { data, error } = await db
-        .from('groups')
-        .select('*');
-    
-    alert('Data: ' + JSON.stringify(data) + ' Error: ' + JSON.stringify(error));
+      .from('groups')
+      .select('*')
+      .eq('category', cat.value)
+      .eq('status', 'approved')
+      .limit(3);
+
+    const cards = data && data.length > 0
+      ? data.map(group => `
+          <div class="card">
+            <div class="card-img"></div>
+            <span class="badge ${group.platform}">${group.platform}</span>
+            <h3>${group.name}</h3>
+            <p>${group.description}</p>
+            <div class="card-buttons">
+              <a href="${group.link}" target="_blank">Join Now</a>
+            </div>
+          </div>
+        `).join('')
+      : `<div class="empty-category">
+           <i class="fa-solid fa-box-open"></i>
+           <p>Nothing here yet. <a href="submit.html">Be the first to submit!</a></p>
+         </div>`;
+
+    container.innerHTML += `
+      <div class="explore-section">
+        <div class="section-header">
+          <h2><i class="fa-solid ${cat.icon}"></i> ${cat.name}</h2>
+          <a href="#" class="view-all">View All ›</a>
+        </div>
+        <div class="categories">
+          ${cards}
+        </div>
+      </div>
+    `;
+  }
 }
+
+loadExplore();

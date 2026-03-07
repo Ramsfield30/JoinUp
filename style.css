@@ -694,3 +694,43 @@ main {
     animation: fadeIn 1s ease;
       padding-bottom: 80px;
 }
+.explore-search {
+  display: flex;
+  margin: 15px;
+  border-radius: 25px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+.explore-search input {
+  flex: 1;
+  padding: 12px 20px;
+  border: none;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 15px;
+  outline: none;
+}
+
+.explore-section {
+  margin-bottom: 10px;
+}
+
+.empty-category {
+  text-align: center;
+  padding: 20px;
+  color: gray;
+  font-size: 14px;
+  width: 100%;
+}
+
+.empty-category i {
+  font-size: 30px;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.empty-category a {
+  color: #25a244;
+  text-decoration: none;
+}
