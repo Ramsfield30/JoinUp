@@ -34,6 +34,12 @@
     <option value="whatsapp">WhatsApp</option>
     <option value="telegram">Telegram</option>
 </select>
+<label>Type</label>
+<select name="type" required>
+    <option value="">-- Select Type --</option>
+    <option value="group">Group</option>
+    <option value="channel">Channel</option>
+</select>
 <label>Select Category</label>
 <select id="category" name="category" required>
     <option value="">-- Select Category --</option>
@@ -52,7 +58,7 @@
        <label>Your Email</label>
        <input type="email" placeholder="Enter your email for notifications.." name="email">
        <label>Description</label>
-<textarea name="description" placeholder="Describe your group/channel - topics, purpose, what members can expect..." rows="4" required></textarea>
+<textarea name="description" placeholder="Describe your group/channel - topics, purpose, what members can expect..." minlength="30" maxlength="200" required></textarea>
     <input type="hidden" name="_next" value="https://joinup-two.vercel.app/submit.html?success=true">
     <div class="policy-notes">
     <p>✅ No spam groups allowed</p>

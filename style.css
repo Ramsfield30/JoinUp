@@ -75,6 +75,7 @@ header div{
     margin-left: -10px;
 }
 header {
+    border-radius: 0 0 10px 10px;
     position: sticky;
     top: 0;
     z-index: 100;
@@ -739,4 +740,38 @@ main {
 .empty-category a {
   color: #25a244;
   text-decoration: none;
+}
+.verified-badge {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background: #0088cc;
+    position: relative;
+    top: 3px;
+    margin-left: 4px;
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+}
+
+.verified-badge i {
+    display: none;
+}
+
+.verified-badge::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 8px;
+    font-weight: bold;
+}
+.card p {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+html {
+    scroll-behavior: smooth;
 }
