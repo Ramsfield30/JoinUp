@@ -1,4 +1,4 @@
- const themeToggle = document.getElementById('themeToggle');
+const themeToggle = document.getElementById('themeToggle');
 const themeWave = document.getElementById('themeWave');
 const themeIcon = document.querySelector('.theme-icon');
 const htmlElement = document.documentElement;
@@ -43,6 +43,19 @@ if (form) {
         const btn = document.querySelector('.submit-form-btn');
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting...';
         btn.disabled = true;
+
+        // Check for duplicate link
+        const { data: existing } = await db
+            .from('groups')
+            .select('link')
+            .eq('link', form['group-link'].value);
+
+        if (existing && existing.length > 0) {
+            btn.innerHTML = 'Submit Group';
+            btn.disabled = false;
+            alert('⚠️ This group is already listed on JoinUp!');
+            return;
+        }
 
         const { error } = await db
             .from('groups')
@@ -102,7 +115,7 @@ async function loadTrending() {
 
 loadTrending();
 
-// Fetch groups for homepage
+// Fetch groups for homepage as carousel
 async function loadGroups() {
     const { data, error } = await db
         .from('groups')
@@ -114,7 +127,7 @@ async function loadGroups() {
         return;
     }
 
-    const container = document.querySelector('.categories');
+    const container = document.querySelector('.latest-scroll');
     if (!container) return;
 
     container.innerHTML = '';
@@ -125,7 +138,7 @@ async function loadGroups() {
             : '';
 
         container.innerHTML += `
-            <div class="card" data-category="${group.category}">
+            <div class="latest-card" data-category="${group.category}">
                 <div class="card-img"></div>
                 <span class="badge ${group.platform}">${group.platform} ${group.type || ''}</span>
                 <h3>${group.name} ${verifiedBadge}</h3>
@@ -145,9 +158,9 @@ loadGroups();
 // Setup filter after cards load
 function setupFilter() {
     const navLinks = document.querySelectorAll('header nav a');
-    const categoriesSection = document.querySelector('section.categories');
+    const latestScroll = document.querySelector('.latest-scroll');
 
-    if (!categoriesSection) return;
+    if (!latestScroll) return;
 
     navLinks.forEach(link => {
         link.addEventListener('click', function(e) {
@@ -161,7 +174,7 @@ function setupFilter() {
 }
 
 function filterGroups(category) {
-    const cards = document.querySelectorAll('section.categories > .card');
+    const cards = document.querySelectorAll('.latest-scroll .latest-card');
     cards.forEach(card => {
         if (category === 'all') {
             card.style.display = 'block';
@@ -243,15 +256,15 @@ const searchInput = document.querySelector('.hero-search input');
 const searchBtn = document.querySelector('.search-btn');
 
 function searchGroups(query) {
-    const cards = document.querySelectorAll('section.categories > .card');
-    const container = document.querySelector('section.categories');
+    const cards = document.querySelectorAll('.latest-scroll .latest-card');
+    const container = document.querySelector('.latest-scroll');
     const q = query.toLowerCase().trim();
     let visibleCount = 0;
 
     cards.forEach(card => {
         const name = card.querySelector('h3').textContent.toLowerCase();
         const description = card.querySelector('p').textContent.toLowerCase();
-        
+
         if (q === '' || name.includes(q) || description.includes(q)) {
             card.style.display = 'block';
             visibleCount++;
@@ -287,6 +300,7 @@ if (searchBtn) {
         searchGroups(searchInput.value);
     });
 }
+
 // Explore search functionality
 const exploreInput = document.querySelector('.explore-search input');
 const exploreBtn = document.querySelector('.explore-search .search-btn');
