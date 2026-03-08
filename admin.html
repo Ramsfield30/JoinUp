@@ -25,7 +25,7 @@
                 <button onclick="logout()" style="background:red; color:white; border:none; padding:8px 15px; border-radius:20px; cursor:pointer; font-weight:bold;">Logout</button>
             </div>
         </header>
-        <main>
+        <main style="padding-bottom:40px;">
             <div style="padding:15px;">
                 <h2 style="color:var(--text-primary);">⏳ Pending Groups</h2>
                 <div id="pending-container">
@@ -82,7 +82,7 @@
                 container.innerHTML += `
                     <div style="background:rgba(255,255,255,0.1); border-radius:15px; padding:15px; margin-bottom:15px;">
                         <h3 style="color:var(--text-primary); margin:0 0 5px;">${group.name}</h3>
-                        <p style="color:gray; font-size:13px; margin:3px 0;">📱 ${group.platform} • 🏷️ ${group.category}</p>
+                        <p style="color:gray; font-size:13px; margin:3px 0;">📱 ${group.platform} • ${group.type || ''} • 🏷️ ${group.category}</p>
                         <p style="color:gray; font-size:13px; margin:3px 0;">🔗 <a href="${group.link}" target="_blank" style="color:#0088cc;">${group.link}</a></p>
                         <p style="color:gray; font-size:13px; margin:3px 0 10px;">📝 ${group.description}</p>
                         <div style="display:flex; gap:10px;">
@@ -109,12 +109,24 @@
 
             container.innerHTML = '';
             data.forEach(group => {
+                const featuredBtn = group.featured
+                    ? `<button onclick="toggleFeatured('${group.link}', false)" style="background:#f0a500; color:white; border:none; padding:8px 15px; border-radius:20px; cursor:pointer; font-weight:bold; flex:1;">⭐ Unfeature</button>`
+                    : `<button onclick="toggleFeatured('${group.link}', true)" style="background:rgba(255,255,255,0.1); color:var(--text-primary); border:1px solid rgba(255,255,255,0.2); padding:8px 15px; border-radius:20px; cursor:pointer; font-weight:bold; flex:1;">⭐ Feature</button>`;
+
+                const verifiedBtn = group.verified
+                    ? `<button onclick="toggleVerified('${group.link}', false)" style="background:#1DA1F2; color:white; border:none; padding:8px 15px; border-radius:20px; cursor:pointer; font-weight:bold; flex:1;">✔ Unverify</button>`
+                    : `<button onclick="toggleVerified('${group.link}', true)" style="background:rgba(255,255,255,0.1); color:var(--text-primary); border:1px solid rgba(255,255,255,0.2); padding:8px 15px; border-radius:20px; cursor:pointer; font-weight:bold; flex:1;">✔ Verify</button>`;
+
                 container.innerHTML += `
                     <div style="background:rgba(255,255,255,0.1); border-radius:15px; padding:15px; margin-bottom:15px;">
                         <h3 style="color:var(--text-primary); margin:0 0 5px;">${group.name}</h3>
-                        <p style="color:gray; font-size:13px; margin:3px 0;">📱 ${group.platform} • 🏷️ ${group.category}</p>
+                        <p style="color:gray; font-size:13px; margin:3px 0;">📱 ${group.platform} • ${group.type || ''} • 🏷️ ${group.category}</p>
                         <p style="color:gray; font-size:13px; margin:3px 0;">🔗 <a href="${group.link}" target="_blank" style="color:#0088cc;">${group.link}</a></p>
                         <p style="color:gray; font-size:13px; margin:3px 0 10px;">📝 ${group.description}</p>
+                        <div style="display:flex; gap:10px; margin-bottom:10px;">
+                            ${featuredBtn}
+                            ${verifiedBtn}
+                        </div>
                         <button onclick="deleteGroup('${group.link}')" style="background:red; color:white; border:none; padding:8px 20px; border-radius:20px; cursor:pointer; font-weight:bold; width:100%;">🗑️ Delete</button>
                     </div>
                 `;
@@ -148,6 +160,24 @@
             const { error } = await db
                 .from('groups')
                 .delete()
+                .eq('link', link);
+
+            if (!error) loadApproved();
+        }
+
+        async function toggleFeatured(link, value) {
+            const { error } = await db
+                .from('groups')
+                .update({ featured: value })
+                .eq('link', link);
+
+            if (!error) loadApproved();
+        }
+
+        async function toggleVerified(link, value) {
+            const { error } = await db
+                .from('groups')
+                .update({ verified: value })
                 .eq('link', link);
 
             if (!error) loadApproved();

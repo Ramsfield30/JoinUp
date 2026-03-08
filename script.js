@@ -44,7 +44,6 @@ if (form) {
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting...';
         btn.disabled = true;
 
-        // Check for duplicate link
         const { data: existing } = await db
             .from('groups')
             .select('link')
@@ -62,6 +61,7 @@ if (form) {
             .insert({
                 name: form['group-name'].value,
                 platform: form['platform'].value,
+                type: form['type'].value,
                 category: form['category'].value,
                 link: form['group-link'].value,
                 description: form['description'].value,
@@ -107,13 +107,27 @@ async function loadTrending() {
                     <span class="top-badge">TOP</span>
                 </div>
                 <p class="trending-name">${group.name}</p>
-                <p class="trending-meta">✅ ${group.platform} • ${group.members}</p>
             </div>
         `;
     });
 }
 
 loadTrending();
+
+// Verified badge SVG
+function getVerifiedBadge(verified) {
+    if (!verified) return '';
+    return `<svg class="verified-badge" viewBox="0 0 24 24" width="18" height="18">
+        <polygon
+            points="12,1.8 14.6,3.4 17.6,3 18.8,5.8 21.6,7 21.2,10 22.8,12 21.2,14 21.6,17 18.8,18.2 17.6,21 14.6,20.6 12,22.2 9.4,20.6 6.4,21 5.2,18.2 2.4,17 2.8,14 1.2,12 2.8,10 2.4,7 5.2,5.8 6.4,3 9.4,3.4"
+            fill="#1DA1F2"
+        />
+        <path
+            d="M9.5 13.8 L7.3 11.6 L6 12.9 L9.5 16.4 L18 7.9 L16.7 6.6 Z"
+            fill="white"
+        />
+    </svg>`;
+}
 
 // Fetch groups for homepage as carousel
 async function loadGroups() {
@@ -133,15 +147,11 @@ async function loadGroups() {
     container.innerHTML = '';
 
     data.forEach(group => {
-        const verifiedBadge = group.verified == true
-            ? `<span class="verified-badge"><i class="fa-solid fa-circle-check"></i></span>`
-            : '';
-
         container.innerHTML += `
             <div class="latest-card" data-category="${group.category}">
                 <div class="card-img"></div>
                 <span class="badge ${group.platform}">${group.platform} ${group.type || ''}</span>
-                <h3>${group.name} ${verifiedBadge}</h3>
+                <h3>${group.name} ${getVerifiedBadge(group.verified)}</h3>
                 <p>${group.description}</p>
                 <div class="card-buttons">
                     <a href="${group.link}" target="_blank">Join Now</a>
@@ -214,22 +224,17 @@ async function loadExplore() {
             .limit(3);
 
         const cards = data && data.length > 0
-            ? data.map(group => {
-                const verifiedBadge = group.verified == true
-                    ? `<span class="verified-badge"><i class="fa-solid fa-circle-check"></i></span>`
-                    : '';
-                return `
-                    <div class="card">
-                        <div class="card-img"></div>
-                        <span class="badge ${group.platform}">${group.platform} ${group.type || ''}</span>
-                        <h3>${group.name} ${verifiedBadge}</h3>
-                        <p>${group.description}</p>
-                        <div class="card-buttons">
-                            <a href="${group.link}" target="_blank">Join Now</a>
-                        </div>
+            ? data.map(group => `
+                <div class="card">
+                    <div class="card-img"></div>
+                    <span class="badge ${group.platform}">${group.platform} ${group.type || ''}</span>
+                    <h3>${group.name} ${getVerifiedBadge(group.verified)}</h3>
+                    <p>${group.description}</p>
+                    <div class="card-buttons">
+                        <a href="${group.link}" target="_blank">Join Now</a>
                     </div>
-                `;
-            }).join('')
+                </div>
+            `).join('')
             : `<div class="empty-category">
                 <i class="fa-solid fa-box-open"></i>
                 <p>Nothing here yet. <a href="submit.html">Be the first to submit!</a></p>
