@@ -332,3 +332,30 @@ if (exploreBtn) {
         searchExplore(exploreInput.value);
     });
 }
+
+// Custom dropdowns
+document.querySelectorAll('.custom-select').forEach(select => {
+    const selected = select.querySelector('.custom-select-selected');
+    const options = select.querySelector('.custom-select-options');
+    const hiddenInput = select.nextElementSibling;
+
+    selected.addEventListener('click', function(e) {
+        e.stopPropagation();
+        document.querySelectorAll('.custom-select-options').forEach(o => o.classList.remove('open'));
+        options.classList.toggle('open');
+    });
+
+    options.querySelectorAll('.custom-option').forEach(option => {
+        option.addEventListener('click', function() {
+            selected.textContent = this.textContent;
+            hiddenInput.value = this.getAttribute('data-value');
+            options.querySelectorAll('.custom-option').forEach(o => o.classList.remove('selected'));
+            this.classList.add('selected');
+            options.classList.remove('open');
+        });
+    });
+});
+
+document.addEventListener('click', function() {
+    document.querySelectorAll('.custom-select-options').forEach(o => o.classList.remove('open'));
+});

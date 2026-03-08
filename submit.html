@@ -29,30 +29,39 @@
            <label>Group/Channel Name</label>
            <input type="text" name="group-name" placeholder="Enter your group/channel name" required>
 <label>Select Platform</label>
-<select id="platform" name="platform" required>
-    <option value="">-- Select Platform --</option>
-    <option value="whatsapp">WhatsApp</option>
-    <option value="telegram">Telegram</option>
-</select>
-<label>Type</label>
-<select name="type" required>
-    <option value="">-- Select Type --</option>
-    <option value="group">Group</option>
-    <option value="channel">Channel</option>
-</select>
+<div class="custom-select" id="platform-select">
+    <div class="custom-select-selected">-- Select Platform --</div>
+    <div class="custom-select-options">
+        <div class="custom-option" data-value="whatsapp" style="color:#25a244;">WhatsApp</div>
+        <div class="custom-option" data-value="telegram" style="color:#0088cc;">Telegram</div>
+    </div>
+</div>
+<input type="hidden" name="platform" id="platform-value">
+<label>Select Type</label>
+<div class="custom-select" id="type-select">
+    <div class="custom-select-selected">-- Select Type --</div>
+    <div class="custom-select-options">
+        <div class="custom-option" data-value="group">Group</div>
+        <div class="custom-option" data-value="channel">Channel</div>
+    </div>
+</div>
+<input type="hidden" name="type" id="type-value">
 <label>Select Category</label>
-<select id="category" name="category" required>
-    <option value="">-- Select Category --</option>
-    <option value="education">Education</option>
-    <option value="tech">Tech</option>
-    <option value="entertainment">Entertainment</option>
-    <option value="crypto">Crypto</option>
-    <option value="business">Business</option>
-    <option value="gaming">Gaming</option>
-    <option value="fun">Fun/Random</option>
-    <option value="religious">Religious</option>
-    <option value="football">Football</option>
-</select>
+<div class="custom-select" id="category-select">
+    <div class="custom-select-selected">-- Select Category --</div>
+    <div class="custom-select-options">
+        <div class="custom-option" data-value="education">Education</div>
+        <div class="custom-option" data-value="tech">Tech</div>
+        <div class="custom-option" data-value="entertainment">Entertainment</div>
+        <div class="custom-option" data-value="crypto">Crypto</div>
+        <div class="custom-option" data-value="business">Business</div>
+        <div class="custom-option" data-value="gaming">Gaming</div>
+        <div class="custom-option" data-value="fun">Fun/Random</div>
+        <div class="custom-option" data-value="religious">Religious</div>
+        <div class="custom-option" data-value="football">Football</div>
+    </div>
+</div>
+<input type="hidden" name="category" id="category-value">
        <label>Group Link</label>
        <input type="url" placeholder="https://....." name="group-link" required>
        <label>Your Email</label>
