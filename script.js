@@ -35,6 +35,36 @@ updateIcon(savedTheme);
 
 themeToggle.addEventListener('click', toggleTheme);
 
+// Verified badge
+function getVerifiedBadge(verified) {
+    if (!verified) return '';
+    return `<svg class="verified-badge" viewBox="0 0 24 24" width="16" height="16">
+        <polygon points="12,1.8 14.6,3.4 17.6,3 18.8,5.8 21.6,7 21.2,10 22.8,12 21.2,14 21.6,17 18.8,18.2 17.6,21 14.6,20.6 12,22.2 9.4,20.6 6.4,21 5.2,18.2 2.4,17 2.8,14 1.2,12 2.8,10 2.4,7 5.2,5.8 6.4,3 9.4,3.4" fill="#1DA1F2"/>
+        <path d="M9.5 13.8 L7.3 11.6 L6 12.9 L9.5 16.4 L18 7.9 L16.7 6.6 Z" fill="white"/>
+    </svg>`;
+}
+
+// Platform badge with logo
+function getPlatformBadge(platform, type) {
+    return `<span class="badge ${platform}">
+        <i class="fa-brands fa-${platform}"></i> ${type || ''}
+    </span>`;
+}
+
+// Avatar function
+function getAvatar(name, platform, image_url) {
+    if (image_url) {
+        return `<div class="card-img" style="background:#000;">
+            <img src="${image_url}" style="width:100%; height:100%; object-fit:cover; border-radius:10px 10px 0 0;">
+        </div>`;
+    }
+    const letter = name.charAt(0).toUpperCase();
+    const color = platform === 'telegram'
+        ? 'linear-gradient(135deg, #0088cc, #005f8e)'
+        : 'linear-gradient(135deg, #25a244, #1a7a32)';
+    return `<div class="card-img" style="background:${color}; display:flex; align-items:center; justify-content:center; font-size:40px; font-weight:bold; color:white;">${letter}</div>`;
+}
+
 // Submit form to Supabase
 const form = document.querySelector('form');
 if (form) {
@@ -44,7 +74,6 @@ if (form) {
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting...';
         btn.disabled = true;
 
-        // Check for duplicate link
         const { data: existing } = await db
             .from('groups')
             .select('link')
@@ -107,21 +136,6 @@ if (form) {
     });
 }
 
-// Verified badge
-function getVerifiedBadge(verified) {
-    if (!verified) return '';
-    return `<svg class="verified-badge" viewBox="0 0 24 24" width="16" height="16">
-        <polygon points="12,1.8 14.6,3.4 17.6,3 18.8,5.8 21.6,7 21.2,10 22.8,12 21.2,14 21.6,17 18.8,18.2 17.6,21 14.6,20.6 12,22.2 9.4,20.6 6.4,21 5.2,18.2 2.4,17 2.8,14 1.2,12 2.8,10 2.4,7 5.2,5.8 6.4,3 9.4,3.4" fill="#1DA1F2"/>
-        <path d="M9.5 13.8 L7.3 11.6 L6 12.9 L9.5 16.4 L18 7.9 L16.7 6.6 Z" fill="white"/>
-    </svg>`;
-}
-// Platform badge with logo
-function getPlatformBadge(platform, type) {
-    return `<span class="badge ${platform}">
-        <i class="fa-brands fa-${platform}"></i> ${type || ''}
-    </span>`;
-}
-
 // Load trending groups from Supabase
 async function loadTrending() {
     const { data, error } = await db
@@ -141,6 +155,7 @@ async function loadTrending() {
         container.innerHTML += `
             <div class="trending-card">
                 <div class="trending-img">
+                    ${getAvatar(group.name, group.platform, group.image_url)}
                     <span class="top-badge">TOP</span>
                 </div>
                 ${getPlatformBadge(group.platform, group.type)}
@@ -176,7 +191,7 @@ async function loadGroups() {
     data.forEach(group => {
         container.innerHTML += `
             <div class="latest-card" data-category="${group.category}">
-                <div class="card-img"></div>
+                ${getAvatar(group.name, group.platform, group.image_url)}
                 ${getPlatformBadge(group.platform, group.type)}
                 <h3>${group.name} ${getVerifiedBadge(group.verified)}</h3>
                 <p>${group.description}</p>
@@ -253,7 +268,7 @@ async function loadExplore() {
         const cards = data && data.length > 0
             ? data.map(group => `
                 <div class="card">
-                    <div class="card-img"></div>
+                    ${getAvatar(group.name, group.platform, group.image_url)}
                     ${getPlatformBadge(group.platform, group.type)}
                     <h3>${group.name} ${getVerifiedBadge(group.verified)}</h3>
                     <p>${group.description}</p>
