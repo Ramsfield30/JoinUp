@@ -237,3 +237,84 @@ async function loadExplore() {
 }
 
 loadExplore();
+
+// Search functionality
+const searchInput = document.querySelector('.hero-search input');
+const searchBtn = document.querySelector('.search-btn');
+
+function searchGroups(query) {
+    const cards = document.querySelectorAll('section.categories > .card');
+    const container = document.querySelector('section.categories');
+    const q = query.toLowerCase().trim();
+    let visibleCount = 0;
+
+    cards.forEach(card => {
+        const name = card.querySelector('h3').textContent.toLowerCase();
+        const description = card.querySelector('p').textContent.toLowerCase();
+        
+        if (q === '' || name.includes(q) || description.includes(q)) {
+            card.style.display = 'block';
+            visibleCount++;
+        } else {
+            card.style.display = 'none';
+        }
+    });
+
+    let noResults = document.getElementById('no-results');
+    if (!noResults) {
+        noResults = document.createElement('div');
+        noResults.id = 'no-results';
+        noResults.style.cssText = 'text-align:center; padding:30px; color:gray; width:100%;';
+        container.appendChild(noResults);
+    }
+
+    if (visibleCount === 0 && q !== '') {
+        noResults.style.display = 'block';
+        noResults.innerHTML = '<i class="fa-solid fa-magnifying-glass" style="font-size:30px; margin-bottom:10px; display:block;"></i> No groups found for "<strong>' + q + '</strong>"';
+    } else {
+        noResults.style.display = 'none';
+    }
+}
+
+if (searchInput) {
+    searchInput.addEventListener('input', function() {
+        searchGroups(this.value);
+    });
+}
+
+if (searchBtn) {
+    searchBtn.addEventListener('click', function() {
+        searchGroups(searchInput.value);
+    });
+}
+// Explore search functionality
+const exploreInput = document.querySelector('.explore-search input');
+const exploreBtn = document.querySelector('.explore-search .search-btn');
+
+function searchExplore(query) {
+    const cards = document.querySelectorAll('#explore-container .card');
+    const q = query.toLowerCase().trim();
+
+    cards.forEach(card => {
+        const name = card.querySelector('h3').textContent.toLowerCase();
+        const description = card.querySelector('p').textContent.toLowerCase();
+
+        if (q === '' || name.includes(q) || description.includes(q)) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+
+if (exploreInput) {
+    exploreInput.addEventListener('input', function() {
+        searchExplore(this.value);
+    });
+}
+
+if (exploreBtn) {
+    exploreBtn.addEventListener('click', function() {
+        searchExplore(exploreInput.value);
+    });
+}
