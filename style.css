@@ -130,15 +130,30 @@ nav{
 nav::-webkit-scrollbar {
     display: none;
 }
-nav a{
+header nav a{
     text-decoration: none;
     color:  var(--text-primary);
     font-weight: 500px;
     white-space: nowrap;
-    padding: 5px 0;
+    padding: 5px 14px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.1);
+    font-size: 13px;
+    transition: all 0.3s ease;
 }
-nav a.active{
-    color: #25a244;
+header nav a.active{
+    background: linear-gradient(135deg, #0088cc, #25a244);
+    color: white;
+    -webkit-text-fill-color: white;
+    box-shadow: 0 0 10px rgba(0,136,204,0.4);
+}
+[data-theme="light"]header nav a {
+    background: rgba(0,0,0,0.06);
+}
+
+[data-theme="light"]header nav a.active {
+    background: linear-gradient(135deg, #0088cc, #25a244);
+    color: white;
 }
 .search-bar{
     display: flex;
@@ -470,7 +485,7 @@ nav a.active{
 }
 .nav-add {
     background: linear-gradient(135deg, #0088cc, #25a244);
-    width: 60px;
+    width: 50px;
     height: 50px;
     border-radius: 50%;
     display: flex;
