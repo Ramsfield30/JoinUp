@@ -361,8 +361,9 @@ nav a.active{
     min-width: 140px;
     border-radius: 15px;
     overflow: hidden;
-    background: rgba(255,255,255,0.1);
-    backdrop-filter: blur(10px)
+    background: var(--bg-primary);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    backdrop-filter: blur(10px);
 }
 .trending-img {
     height: 100px;
@@ -943,4 +944,22 @@ html {
 [data-theme="light"] .custom-select-selected {
     background: rgba(0,0,0,0.05);
     border: 1px solid rgba(0,0,0,0.15);
+}
+.trending-name {
+    padding: 8px 10px 2px;
+    font-size: 13px;
+    font-weight: bold;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.trending-desc {
+    padding: 0 10px;
+    font-size: 11px;
+    color: gray;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
