@@ -44,6 +44,7 @@ if (form) {
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting...';
         btn.disabled = true;
 
+        // Check for duplicate link
         const { data: existing } = await db
             .from('groups')
             .select('link')
@@ -56,6 +57,26 @@ if (form) {
             return;
         }
 
+        // Upload image if provided
+        let image_url = null;
+        const logoFile = document.getElementById('group-logo').files[0];
+        if (logoFile) {
+            const fileExt = logoFile.name.split('.').pop();
+            const fileName = `${Date.now()}.${fileExt}`;
+            const { data: uploadData, error: uploadError } = await db
+                .storage
+                .from('logos')
+                .upload(fileName, logoFile);
+
+            if (!uploadError) {
+                const { data: urlData } = db
+                    .storage
+                    .from('logos')
+                    .getPublicUrl(fileName);
+                image_url = urlData.publicUrl;
+            }
+        }
+
         const { error } = await db
             .from('groups')
             .insert({
@@ -65,6 +86,7 @@ if (form) {
                 category: form['category'].value,
                 link: form['group-link'].value,
                 description: form['description'].value,
+                image_url: image_url,
                 status: 'pending'
             });
 
@@ -369,3 +391,20 @@ document.querySelectorAll('.custom-select').forEach(select => {
 document.addEventListener('click', function() {
     document.querySelectorAll('.custom-select-options').forEach(o => o.classList.remove('open'));
 });
+
+// Image preview for logo upload
+const logoInput = document.getElementById('group-logo');
+if (logoInput) {
+    logoInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('preview-img').src = e.target.result;
+                document.getElementById('image-preview').style.display = 'block';
+                document.getElementById('upload-text').textContent = file.name;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+}

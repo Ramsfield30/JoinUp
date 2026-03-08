@@ -68,6 +68,16 @@
        <input type="email" placeholder="Enter your email for notifications.." name="email">
        <label>Description</label>
 <textarea name="description" placeholder="Describe your group/channel - topics, purpose, what members can expect..." minlength="30" maxlength="200" required></textarea>
+<label>Group Logo (optional)</label>
+<div class="upload-area" onclick="document.getElementById('group-logo').click()">
+    <i class="fa-solid fa-image" style="font-size:30px; color:gray;"></i>
+    <p id="upload-text">Tap to upload logo</p>
+    <p style="color:gray; font-size:11px;">JPG, PNG — Max 2MB</p>
+    <input type="file" id="group-logo" accept="image/*" style="display:none;">
+</div>
+<div id="image-preview" style="display:none; margin-bottom:15px;">
+    <img id="preview-img" style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:3px solid #0088cc;">
+</div>
     <input type="hidden" name="_next" value="https://joinup-two.vercel.app/submit.html?success=true">
     <div class="policy-notes">
     <p>✅ No spam groups allowed</p>
@@ -83,7 +93,7 @@
      <footer class="submit-footer">
          <div class="footer-links">
              <a href="about.html">About</a> |
-             <a href="#">Contact</a> |
+             <a href="contact.html">Contact</a> |
              <a href="privacy.html">Privacy Policy</a> |
              <a href="terms.html">Terms</a>
          </div>
