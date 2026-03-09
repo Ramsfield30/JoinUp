@@ -80,20 +80,20 @@ if (form) {
             .eq('link', form['group-link'].value);
 
         if (existing && existing.length > 0) {
-    btn.innerHTML = 'Submit Group';
-    btn.disabled = false;
-    const linkInput = document.getElementById('group-link');
-    linkInput.style.border = '2px solid red';
-    let errMsg = document.getElementById('link-error');
-    if (!errMsg) {
-        errMsg = document.createElement('p');
-        errMsg.id = 'link-error';
-        errMsg.style.cssText = 'color:red; font-size:13px; margin-top:5px; padding-left:15px;';
-        linkInput.parentNode.insertBefore(errMsg, linkInput.nextSibling);
-    }
-    errMsg.textContent = '⚠️ This group is already listed on JoinUp!';
-    return;
-}
+            btn.innerHTML = 'Submit Group';
+            btn.disabled = false;
+            const linkInput = document.getElementById('group-link');
+            linkInput.style.border = '2px solid red';
+            let errMsg = document.getElementById('link-error');
+            if (!errMsg) {
+                errMsg = document.createElement('p');
+                errMsg.id = 'link-error';
+                errMsg.style.cssText = 'color:red; font-size:13px; margin-top:5px; padding-left:15px;';
+                linkInput.parentNode.insertBefore(errMsg, linkInput.nextSibling);
+            }
+            errMsg.textContent = '⚠️ This group is already listed on JoinUp!';
+            return;
+        }
 
         // Upload image if provided
         let image_url = null;
@@ -126,7 +126,7 @@ if (form) {
                 link: form['group-link'].value,
                 description: form['description'].value,
                 image_url: image_url,
-                email: form['email'].value,
+                email: form['email'] && form['email'].value ? form['email'].value : null,
                 status: 'pending'
             });
 
@@ -142,7 +142,7 @@ if (form) {
         } else {
             btn.innerHTML = 'Submit Group';
             btn.disabled = false;
-            alert('Something went wrong! Please try again.');
+            alert('Error: ' + JSON.stringify(error));
         }
     });
 }
