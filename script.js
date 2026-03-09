@@ -136,7 +136,7 @@ if (form) {
                     <i class="fa-solid fa-circle-check" style="font-size:60px; color:#25a244;"></i>
                     <h2 style="color:var(--text-primary); margin-top:15px;">Successfully Submitted!</h2>
                     <p style="color:gray;">Our team will review your submission shortly.</p>
-                    <a href="/index" style="color:#25a244;">← Back to Home</a>
+                    <a href="/" style="color:#25a244;">← Back to Home</a>
                 </div>
             `;
         } else {
