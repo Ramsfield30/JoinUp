@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <title>JoinUp - Submit Your Group</title>
+</head>
+
+<body>
+     <header>
+    <div class="header-top">
+        <img class="logo" src="/joinup-logo.png" alt="JoinUp Logo">
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+            <div class="theme-wave" id="themeWave"></div>
+            <svg class="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+            </svg>
+        </button>
+    </div>
+     </header>
+     <main>
+       <h1 class="submit-title">Submit Your Group/Channel</h1>
+       <p class="submit-description">Share your Telegram or WhatsApp group/channel with the world. Fill out the form to post your group/channel and attract new members or followers</p>
+       <div class="submit-card">
+       <form>
+           <label>Group/Channel Name</label>
+           <input type="text" name="group-name" placeholder="Enter your group/channel name" required>
+<label>Select Platform</label>
+<div class="custom-select" id="platform-select">
+    <div class="custom-select-selected">-- Select Platform --</div>
+    <div class="custom-select-options">
+        <div class="custom-option" data-value="whatsapp" style="color:#25a244;">WhatsApp</div>
+        <div class="custom-option" data-value="telegram" style="color:#0088cc;">Telegram</div>
+    </div>
+</div>
+<input type="hidden" name="platform" id="platform-value">
+<label>Select Type</label>
+<div class="custom-select" id="type-select">
+    <div class="custom-select-selected">-- Select Type --</div>
+    <div class="custom-select-options">
+        <div class="custom-option" data-value="group">Group</div>
+        <div class="custom-option" data-value="channel">Channel</div>
+    </div>
+</div>
+<input type="hidden" name="type" id="type-value">
+<label>Select Category</label>
+<div class="custom-select" id="category-select">
+    <div class="custom-select-selected">-- Select Category --</div>
+    <div class="custom-select-options">
+        <div class="custom-option" data-value="education">Education</div>
+        <div class="custom-option" data-value="tech">Tech</div>
+        <div class="custom-option" data-value="entertainment">Entertainment</div>
+        <div class="custom-option" data-value="crypto">Crypto</div>
+        <div class="custom-option" data-value="business">Business</div>
+        <div class="custom-option" data-value="gaming">Gaming</div>
+        <div class="custom-option" data-value="fun">Fun/Random</div>
+        <div class="custom-option" data-value="religious">Religious</div>
+        <div class="custom-option" data-value="football">Football</div>
+    </div>
+</div>
+<input type="hidden" name="category" id="category-value">
+       <label>Group Link</label>
+       <input type="url" placeholder="https://....." name="group-link" required>
+       <label>Your Email</label>
+       <input type="email" placeholder="Enter your email for notifications.." name="email">
+       <label>Description</label>
+<textarea name="description" placeholder="Describe your group/channel - topics, purpose, what members can expect..." minlength="30" maxlength="200" required></textarea>
+<label>Group Logo (optional)</label>
+<div class="upload-area" onclick="document.getElementById('group-logo').click()">
+    <i class="fa-solid fa-image" style="font-size:30px; color:gray;"></i>
+    <p id="upload-text">Tap to upload logo</p>
+    <p style="color:gray; font-size:11px;">JPG, PNG — Max 2MB</p>
+    <input type="file" id="group-logo" accept="image/*" style="display:none;">
+</div>
+<div id="image-preview" style="display:none; margin-bottom:15px;">
+    <img id="preview-img" style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:3px solid #0088cc;">
+</div>
+    <input type="hidden" name="_next" value="https://joinup-two.vercel.app/submit?success=true">
+    <div class="policy-notes">
+    <p>✅ No spam groups allowed</p>
+    <p>⏱ Reviewed within 24 hours</p>
+    <p>🔒 Your email is kept private</p>
+</div>
+       <button type="submit" class="submit-form-btn">Submit Group</button>
+       <p class="submit-note">Our team will review your submission before it goes live</p>
+       </form>
+   
+       </div>
+     </main>
+     <footer class="submit-footer">
+         <div class="footer-links">
+             <a href="/about">About</a> |
+             <a href="/contact">Contact</a> |
+             <a href="/privacy">Privacy Policy</a> |
+             <a href="/terms">Terms</a>
+         </div>
+         <p>© 2026 JoinUp. All rights reserved.</p>
+     </footer>
+     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/supabase.js"></script>
+      <script src="/script.js"></script>
+</body>
+
+</html>
