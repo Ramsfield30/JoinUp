@@ -126,7 +126,7 @@ if (form) {
                     <i class="fa-solid fa-circle-check" style="font-size:60px; color:#25a244;"></i>
                     <h2 style="color:var(--text-primary); margin-top:15px;">Successfully Submitted!</h2>
                     <p style="color:gray;">Our team will review your submission shortly.</p>
-                    <a href="index.html" style="color:#25a244;">← Back to Home</a>
+                    <a href="/index" style="color:#25a244;">← Back to Home</a>
                 </div>
             `;
         } else {
@@ -280,7 +280,7 @@ async function loadExplore() {
             `).join('')
             : `<div class="empty-category">
                 <i class="fa-solid fa-box-open"></i>
-                <p>Nothing here yet. <a href="submit.html">Be the first to submit!</a></p>
+                <p>Nothing here yet. <a href="/submit">Be the first to submit!</a></p>
                </div>`;
 
         container.innerHTML += `

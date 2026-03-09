@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-   <link rel="stylesheet" href="style.css">
+   <link rel="stylesheet" href="/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <title>JoinUp - Submit Your Group</title>
 </head>
@@ -12,7 +12,7 @@
 <body>
      <header>
     <div class="header-top">
-        <img class="logo" src="joinup-logo.png" alt="JoinUp Logo">
+        <img class="logo" src="/joinup-logo.png" alt="JoinUp Logo">
         <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
             <div class="theme-wave" id="themeWave"></div>
             <svg class="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -78,7 +78,7 @@
 <div id="image-preview" style="display:none; margin-bottom:15px;">
     <img id="preview-img" style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:3px solid #0088cc;">
 </div>
-    <input type="hidden" name="_next" value="https://joinup-two.vercel.app/submit.html?success=true">
+    <input type="hidden" name="_next" value="https://joinup-two.vercel.app/submit?success=true">
     <div class="policy-notes">
     <p>✅ No spam groups allowed</p>
     <p>⏱ Reviewed within 24 hours</p>
@@ -92,16 +92,16 @@
      </main>
      <footer class="submit-footer">
          <div class="footer-links">
-             <a href="about.html">About</a> |
-             <a href="contact.html">Contact</a> |
-             <a href="privacy.html">Privacy Policy</a> |
-             <a href="terms.html">Terms</a>
+             <a href="/about">About</a> |
+             <a href="/contact">Contact</a> |
+             <a href="/privacy">Privacy Policy</a> |
+             <a href="/terms">Terms</a>
          </div>
          <p>© 2026 JoinUp. All rights reserved.</p>
      </footer>
      <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase.js"></script>
-      <script src="script.js"></script>
+<script src="/supabase.js"></script>
+      <script src="/script.js"></script>
 </body>
 
 </html>
