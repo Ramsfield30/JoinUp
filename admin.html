@@ -8,13 +8,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
-    <!-- Password Screen -->
+    <!-- Login Screen -->
     <div id="login-screen" style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; padding:20px;">
         <img src="joinup-logo.png" style="height:80px; margin-bottom:20px;">
         <h2 style="color:var(--text-primary); margin-bottom:20px;">Admin Login</h2>
+        <input type="email" id="admin-email" placeholder="Enter email" style="padding:12px 20px; border-radius:25px; border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.1); color:var(--text-primary); font-size:16px; outline:none; width:80%; box-sizing:border-box; margin-bottom:15px;">
         <input type="password" id="admin-password" placeholder="Enter password" style="padding:12px 20px; border-radius:25px; border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.1); color:var(--text-primary); font-size:16px; outline:none; width:80%; box-sizing:border-box; margin-bottom:15px;">
-        <button onclick="checkPassword()" style="background:linear-gradient(135deg, #0088cc, #25a244); color:white; border:none; padding:12px 30px; border-radius:25px; font-size:16px; font-weight:bold; cursor:pointer; width:80%;">Login</button>
-        <p id="login-error" style="color:red; margin-top:10px; display:none;">Wrong password!</p>
+        <button onclick="adminLogin()" style="background:linear-gradient(135deg, #0088cc, #25a244); color:white; border:none; padding:12px 30px; border-radius:25px; font-size:16px; font-weight:bold; cursor:pointer; width:80%;">Login</button>
+        <p id="login-error" style="color:red; margin-top:10px; display:none;">Wrong email or password!</p>
     </div>
 
     <!-- Admin Panel -->
@@ -22,7 +23,7 @@
         <header>
             <div class="header-top">
                 <img class="logo" src="joinup-logo.png" alt="JoinUp Logo">
-                <button onclick="logout()" style="background:red; color:white; border:none; padding:8px 15px; border-radius:20px; cursor:pointer; font-weight:bold;">Logout</button>
+                <button onclick="adminLogout()" style="background:red; color:white; border:none; padding:8px 15px; border-radius:20px; cursor:pointer; font-weight:bold;">Logout</button>
             </div>
         </header>
         <main style="padding-bottom:40px;">
@@ -44,31 +45,57 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase.js"></script>
     <script>
-        const ADMIN_PASSWORD = 'Ramsfield302007';
-
-        function checkPassword() {
-            const input = document.getElementById('admin-password').value;
-            if (input === ADMIN_PASSWORD) {
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('admin-panel').style.display = 'block';
-                loadPending();
-                loadApproved();
-            } else {
-                document.getElementById('login-error').style.display = 'block';
+        // Check if already logged in
+        async function checkSession() {
+            const { data: { session } } = await db.auth.getSession();
+            if (session) {
+                showPanel();
             }
         }
 
-        function logout() {
+        checkSession();
+
+        async function adminLogin() {
+            const email = document.getElementById('admin-email').value;
+            const password = document.getElementById('admin-password').value;
+            const btn = document.querySelector('#login-screen button');
+            
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Logging in...';
+            btn.disabled = true;
+
+            const { data, error } = await db.auth.signInWithPassword({
+                email: email,
+                password: password
+            });
+
+            if (error) {
+                document.getElementById('login-error').style.display = 'block';
+                btn.innerHTML = 'Login';
+                btn.disabled = false;
+            } else {
+                showPanel();
+            }
+        }
+
+        async function adminLogout() {
+            await db.auth.signOut();
             document.getElementById('login-screen').style.display = 'flex';
             document.getElementById('admin-panel').style.display = 'none';
-            document.getElementById('admin-password').value = '';
+        }
+
+        function showPanel() {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('admin-panel').style.display = 'block';
+            loadPending();
+            loadApproved();
         }
 
         async function loadPending() {
             const { data, error } = await db
                 .from('groups')
                 .select('*')
-                .eq('status', 'pending');
+                .eq('status', 'pending')
+                .order('created_at', { ascending: false });
 
             const container = document.getElementById('pending-container');
 
@@ -79,12 +106,14 @@
 
             container.innerHTML = '';
             data.forEach(group => {
+                const date = new Date(group.created_at).toLocaleString();
                 container.innerHTML += `
                     <div style="background:rgba(255,255,255,0.1); border-radius:15px; padding:15px; margin-bottom:15px;">
                         <h3 style="color:var(--text-primary); margin:0 0 5px;">${group.name}</h3>
                         <p style="color:gray; font-size:13px; margin:3px 0;">📱 ${group.platform} • ${group.type || ''} • 🏷️ ${group.category}</p>
                         <p style="color:gray; font-size:13px; margin:3px 0;">🔗 <a href="${group.link}" target="_blank" style="color:#0088cc;">${group.link}</a></p>
-                        <p style="color:gray; font-size:13px; margin:3px 0 10px;">📝 ${group.description}</p>
+                        <p style="color:gray; font-size:13px; margin:3px 0 5px;">📝 ${group.description}</p>
+                        <p style="color:gray; font-size:11px; margin:0 0 10px;">🕐 Submitted: ${date}</p>
                         <div style="display:flex; gap:10px;">
                             <button onclick="approveGroup('${group.link}')" style="background:#25a244; color:white; border:none; padding:8px 20px; border-radius:20px; cursor:pointer; font-weight:bold; flex:1;">✅ Approve</button>
                             <button onclick="rejectGroup('${group.link}')" style="background:red; color:white; border:none; padding:8px 20px; border-radius:20px; cursor:pointer; font-weight:bold; flex:1;">❌ Reject</button>
@@ -98,7 +127,8 @@
             const { data, error } = await db
                 .from('groups')
                 .select('*')
-                .eq('status', 'approved');
+                .eq('status', 'approved')
+                .order('created_at', { ascending: false });
 
             const container = document.getElementById('approved-container');
 
@@ -109,6 +139,7 @@
 
             container.innerHTML = '';
             data.forEach(group => {
+                const date = new Date(group.created_at).toLocaleString();
                 const featuredBtn = group.featured
                     ? `<button onclick="toggleFeatured('${group.link}', false)" style="background:#f0a500; color:white; border:none; padding:8px 15px; border-radius:20px; cursor:pointer; font-weight:bold; flex:1;">⭐ Unfeature</button>`
                     : `<button onclick="toggleFeatured('${group.link}', true)" style="background:rgba(255,255,255,0.1); color:var(--text-primary); border:1px solid rgba(255,255,255,0.2); padding:8px 15px; border-radius:20px; cursor:pointer; font-weight:bold; flex:1;">⭐ Feature</button>`;
@@ -122,7 +153,8 @@
                         <h3 style="color:var(--text-primary); margin:0 0 5px;">${group.name}</h3>
                         <p style="color:gray; font-size:13px; margin:3px 0;">📱 ${group.platform} • ${group.type || ''} • 🏷️ ${group.category}</p>
                         <p style="color:gray; font-size:13px; margin:3px 0;">🔗 <a href="${group.link}" target="_blank" style="color:#0088cc;">${group.link}</a></p>
-                        <p style="color:gray; font-size:13px; margin:3px 0 10px;">📝 ${group.description}</p>
+                        <p style="color:gray; font-size:13px; margin:3px 0 5px;">📝 ${group.description}</p>
+                        <p style="color:gray; font-size:11px; margin:0 0 10px;">🕐 Submitted: ${date}</p>
                         <div style="display:flex; gap:10px; margin-bottom:10px;">
                             ${featuredBtn}
                             ${verifiedBtn}
@@ -138,11 +170,7 @@
                 .from('groups')
                 .update({ status: 'approved' })
                 .eq('link', link);
-
-            if (!error) {
-                loadPending();
-                loadApproved();
-            }
+            if (!error) { loadPending(); loadApproved(); }
         }
 
         async function rejectGroup(link) {
@@ -150,18 +178,15 @@
                 .from('groups')
                 .delete()
                 .eq('link', link);
-
             if (!error) loadPending();
         }
 
         async function deleteGroup(link) {
             if (!confirm('Are you sure you want to delete this group?')) return;
-
             const { error } = await db
                 .from('groups')
                 .delete()
                 .eq('link', link);
-
             if (!error) loadApproved();
         }
 
@@ -170,7 +195,6 @@
                 .from('groups')
                 .update({ featured: value })
                 .eq('link', link);
-
             if (!error) loadApproved();
         }
 
@@ -179,7 +203,6 @@
                 .from('groups')
                 .update({ verified: value })
                 .eq('link', link);
-
             if (!error) loadApproved();
         }
 
@@ -187,10 +210,10 @@
         const savedTheme = localStorage.getItem('theme') || 'light';
         document.documentElement.setAttribute('data-theme', savedTheme);
 
-        // Allow Enter key on password
+        // Enter key on password
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('admin-password').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') checkPassword();
+                if (e.key === 'Enter') adminLogin();
             });
         });
     </script>
