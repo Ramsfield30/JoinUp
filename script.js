@@ -92,13 +92,14 @@ if (form) {
         if (logoFile) {
             const fileExt = logoFile.name.split('.').pop();
             const fileName = `${Date.now()}.${fileExt}`;
+
             const { data: uploadData, error: uploadError } = await db
                 .storage
                 .from('logos')
                 .upload(fileName, logoFile);
 
             if (!uploadError) {
-                const { data: urlData } = db
+                const { data: urlData } = await db
                     .storage
                     .from('logos')
                     .getPublicUrl(fileName);
@@ -154,7 +155,7 @@ async function loadTrending() {
     data.forEach(group => {
         container.innerHTML += `
             <div class="trending-card">
-                <div class="trending-img">
+                <div style="position:relative;">
                     ${getAvatar(group.name, group.platform, group.image_url)}
                     <span class="top-badge">TOP</span>
                 </div>
