@@ -59,7 +59,7 @@
             const email = document.getElementById('admin-email').value;
             const password = document.getElementById('admin-password').value;
             const btn = document.querySelector('#login-screen button');
-            
+
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Logging in...';
             btn.disabled = true;
 
@@ -97,6 +97,9 @@
                 .eq('status', 'pending')
                 .order('created_at', { ascending: false });
 
+            console.log('Pending data:', data);
+            console.log('Pending error:', error);
+
             const container = document.getElementById('pending-container');
 
             if (!data || data.length === 0) {
@@ -130,6 +133,9 @@
                 .eq('status', 'approved')
                 .order('created_at', { ascending: false });
 
+            console.log('Approved data:', data);
+            console.log('Approved error:', error);
+
             const container = document.getElementById('approved-container');
 
             if (!data || data.length === 0) {
@@ -145,7 +151,7 @@
                     : `<button onclick="toggleFeatured('${group.link}', true)" style="background:rgba(255,255,255,0.1); color:var(--text-primary); border:1px solid rgba(255,255,255,0.2); padding:8px 15px; border-radius:20px; cursor:pointer; font-weight:bold; flex:1;">⭐ Feature</button>`;
 
                 const verifiedBtn = group.verified
-                    ? `<button onclick="toggleVerified('${group.link}', false)" style="background:#1DA1F2; color:white; border:none; padding:8px 15px; border-radius:20px; cursor:pointer; font-weight:bold; flex:1;">✔ Unverify</button>`
+                    ? `<button onclick="toggleVerified('${group.link}', false)" style="background:#1DA1F2; color:white; border:none; padding:8px 20px; border-radius:20px; cursor:pointer; font-weight:bold; flex:1;">✔ Unverify</button>`
                     : `<button onclick="toggleVerified('${group.link}', true)" style="background:rgba(255,255,255,0.1); color:var(--text-primary); border:1px solid rgba(255,255,255,0.2); padding:8px 15px; border-radius:20px; cursor:pointer; font-weight:bold; flex:1;">✔ Verify</button>`;
 
                 container.innerHTML += `
