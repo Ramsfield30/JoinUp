@@ -181,13 +181,12 @@
         }
 
         async function deleteGroup(link) {
-            if (!confirm('Are you sure you want to delete this group?')) return;
-            const { error } = await db
-                .from('groups')
-                .delete()
-                .eq('link', link);
-            if (!error) loadApproved();
-        }
+    const { error } = await db
+        .from('groups')
+        .delete()
+        .eq('link', link);
+    if (!error) { loadApproved(); loadPending(); }
+}
 
         async function toggleFeatured(link, value) {
             const { error } = await db
