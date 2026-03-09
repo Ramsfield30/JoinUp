@@ -45,12 +45,9 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase.js"></script>
     <script>
-        // Check if already logged in
         async function checkSession() {
             const { data: { session } } = await db.auth.getSession();
-            if (session) {
-                showPanel();
-            }
+            if (session) showPanel();
         }
 
         checkSession();
@@ -97,9 +94,6 @@
                 .eq('status', 'pending')
                 .order('created_at', { ascending: false });
 
-            console.log('Pending data:', data);
-            console.log('Pending error:', error);
-
             const container = document.getElementById('pending-container');
 
             if (!data || data.length === 0) {
@@ -115,6 +109,7 @@
                         <h3 style="color:var(--text-primary); margin:0 0 5px;">${group.name}</h3>
                         <p style="color:gray; font-size:13px; margin:3px 0;">📱 ${group.platform} • ${group.type || ''} • 🏷️ ${group.category}</p>
                         <p style="color:gray; font-size:13px; margin:3px 0;">🔗 <a href="${group.link}" target="_blank" style="color:#0088cc;">${group.link}</a></p>
+                        <p style="color:gray; font-size:13px; margin:3px 0;">📧 ${group.email || 'No email provided'}</p>
                         <p style="color:gray; font-size:13px; margin:3px 0 5px;">📝 ${group.description}</p>
                         <p style="color:gray; font-size:11px; margin:0 0 10px;">🕐 Submitted: ${date}</p>
                         <div style="display:flex; gap:10px;">
@@ -133,9 +128,6 @@
                 .eq('status', 'approved')
                 .order('created_at', { ascending: false });
 
-            console.log('Approved data:', data);
-            console.log('Approved error:', error);
-
             const container = document.getElementById('approved-container');
 
             if (!data || data.length === 0) {
@@ -151,7 +143,7 @@
                     : `<button onclick="toggleFeatured('${group.link}', true)" style="background:rgba(255,255,255,0.1); color:var(--text-primary); border:1px solid rgba(255,255,255,0.2); padding:8px 15px; border-radius:20px; cursor:pointer; font-weight:bold; flex:1;">⭐ Feature</button>`;
 
                 const verifiedBtn = group.verified
-                    ? `<button onclick="toggleVerified('${group.link}', false)" style="background:#1DA1F2; color:white; border:none; padding:8px 20px; border-radius:20px; cursor:pointer; font-weight:bold; flex:1;">✔ Unverify</button>`
+                    ? `<button onclick="toggleVerified('${group.link}', false)" style="background:#1DA1F2; color:white; border:none; padding:8px 15px; border-radius:20px; cursor:pointer; font-weight:bold; flex:1;">✔ Unverify</button>`
                     : `<button onclick="toggleVerified('${group.link}', true)" style="background:rgba(255,255,255,0.1); color:var(--text-primary); border:1px solid rgba(255,255,255,0.2); padding:8px 15px; border-radius:20px; cursor:pointer; font-weight:bold; flex:1;">✔ Verify</button>`;
 
                 container.innerHTML += `
@@ -159,6 +151,7 @@
                         <h3 style="color:var(--text-primary); margin:0 0 5px;">${group.name}</h3>
                         <p style="color:gray; font-size:13px; margin:3px 0;">📱 ${group.platform} • ${group.type || ''} • 🏷️ ${group.category}</p>
                         <p style="color:gray; font-size:13px; margin:3px 0;">🔗 <a href="${group.link}" target="_blank" style="color:#0088cc;">${group.link}</a></p>
+                        <p style="color:gray; font-size:13px; margin:3px 0;">📧 ${group.email || 'No email provided'}</p>
                         <p style="color:gray; font-size:13px; margin:3px 0 5px;">📝 ${group.description}</p>
                         <p style="color:gray; font-size:11px; margin:0 0 10px;">🕐 Submitted: ${date}</p>
                         <div style="display:flex; gap:10px; margin-bottom:10px;">
@@ -212,11 +205,9 @@
             if (!error) loadApproved();
         }
 
-        // Theme
         const savedTheme = localStorage.getItem('theme') || 'light';
         document.documentElement.setAttribute('data-theme', savedTheme);
 
-        // Enter key on password
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('admin-password').addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') adminLogin();

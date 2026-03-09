@@ -117,6 +117,7 @@ if (form) {
                 link: form['group-link'].value,
                 description: form['description'].value,
                 image_url: image_url,
+                email: form['email'].value,
                 status: 'pending'
             });
 
