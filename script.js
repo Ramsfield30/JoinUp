@@ -35,7 +35,7 @@ updateIcon(savedTheme);
 
 themeToggle.addEventListener('click', toggleTheme);
 
-// Verified badge
+// ========== VERIFIED BADGE ==========
 function getVerifiedBadge(verified) {
     if (!verified) return '';
     return `<svg class="verified-badge" viewBox="0 0 24 24" width="16" height="16">
@@ -44,14 +44,14 @@ function getVerifiedBadge(verified) {
     </svg>`;
 }
 
-// Platform badge with logo
+// ========== PLATFORM BADGE ==========
 function getPlatformBadge(platform, type) {
     return `<span class="badge ${platform}">
         <i class="fa-brands fa-${platform}"></i> ${type || ''}
     </span>`;
 }
 
-// Avatar function
+// ========== AVATAR ==========
 function getAvatar(name, platform, image_url) {
     if (image_url) {
         return `<div class="card-img" style="background:#000;">
@@ -65,7 +65,22 @@ function getAvatar(name, platform, image_url) {
     return `<div class="card-img" style="background:${color}; display:flex; align-items:center; justify-content:center; font-size:40px; font-weight:bold; color:white;">${letter}</div>`;
 }
 
-// Submit form to Supabase
+// ========== SKELETON LOADING ==========
+function showSkeletons(container, count = 4) {
+    container.innerHTML = '';
+    for (let i = 0; i < count; i++) {
+        container.innerHTML += `
+            <div class="skeleton-card">
+                <div class="skeleton skeleton-img"></div>
+                <div class="skeleton skeleton-line"></div>
+                <div class="skeleton skeleton-line short"></div>
+                <div class="skeleton skeleton-btn"></div>
+            </div>
+        `;
+    }
+}
+
+// ========== SUBMIT FORM ==========
 const form = document.querySelector('form');
 if (form) {
     form.addEventListener('submit', async function(e) {
@@ -91,11 +106,10 @@ if (form) {
                 errMsg.style.cssText = 'color:red; font-size:13px; margin-top:5px; padding-left:15px;';
                 linkInput.parentNode.insertBefore(errMsg, linkInput.nextSibling);
             }
-            errMsg.textContent = '⚠️ This group is already listed on JoinUp!';
+            errMsg.textContent = 'This group is already listed on JoinUp!';
             return;
         }
 
-        // Upload image if provided
         let image_url = null;
         const logoFile = document.getElementById('group-logo').files[0];
         if (logoFile) {
@@ -136,32 +150,41 @@ if (form) {
                     <i class="fa-solid fa-circle-check" style="font-size:60px; color:#25a244;"></i>
                     <h2 style="color:var(--text-primary); margin-top:15px;">Successfully Submitted!</h2>
                     <p style="color:gray;">Our team will review your submission shortly.</p>
-                    <a href="/" style="color:#25a244;">← Back to Home</a>
+                    <a href="/" style="color:#25a244;">Back to Home</a>
                 </div>
             `;
         } else {
-            btn.innerHTML = 'Submit Group';
-            btn.disabled = false;
-            alert('Error: ' + JSON.stringify(error));
+            form.innerHTML = `
+                <div style="text-align:center; padding: 30px;">
+                    <i class="fa-solid fa-circle-xmark" style="font-size:60px; color:red;"></i>
+                    <h2 style="color:var(--text-primary); margin-top:15px;">Something Went Wrong!</h2>
+                    <p style="color:gray;">Please check your details and try again.</p>
+                    <a href="/submit" style="color:red;">Try Again</a>
+                </div>
+            `;
         }
     });
 }
 
-// Load trending groups from Supabase
+// ========== LOAD TRENDING GROUPS ==========
 async function loadTrending() {
+    const container = document.querySelector('.trending-scroll');
+    if (!container) return;
+
+    showSkeletons(container, 3);
+
     const { data, error } = await db
         .from('groups')
         .select('*')
         .eq('status', 'approved')
         .eq('featured', true);
 
-    if (!data || data.length === 0) return;
-
-    const container = document.querySelector('.trending-scroll');
-    if (!container) return;
+    if (!data || data.length === 0) {
+        container.innerHTML = '';
+        return;
+    }
 
     container.innerHTML = '';
-
     data.forEach(group => {
         container.innerHTML += `
             <div class="trending-card">
@@ -182,8 +205,13 @@ async function loadTrending() {
 
 loadTrending();
 
-// Fetch groups for homepage as carousel
+// ========== LOAD LATEST GROUPS ==========
 async function loadGroups() {
+    const container = document.querySelector('.latest-scroll');
+    if (!container) return;
+
+    showSkeletons(container, 4);
+
     const { data, error } = await db
         .from('groups')
         .select('*')
@@ -194,11 +222,7 @@ async function loadGroups() {
         return;
     }
 
-    const container = document.querySelector('.latest-scroll');
-    if (!container) return;
-
     container.innerHTML = '';
-
     data.forEach(group => {
         container.innerHTML += `
             <div class="latest-card" data-category="${group.category}">
@@ -218,7 +242,7 @@ async function loadGroups() {
 
 loadGroups();
 
-// Setup filter after cards load
+// ========== FILTER ==========
 function setupFilter() {
     const navLinks = document.querySelectorAll('header nav a');
     const latestScroll = document.querySelector('.latest-scroll');
@@ -242,16 +266,12 @@ function filterGroups(category) {
         if (category === 'all') {
             card.style.display = 'block';
         } else {
-            if (card.getAttribute('data-category') === category) {
-                card.style.display = 'block';
-            } else {
-                card.style.display = 'none';
-            }
+            card.style.display = card.getAttribute('data-category') === category ? 'block' : 'none';
         }
     });
 }
 
-// Explore page - load by category
+// ========== EXPLORE PAGE ==========
 const categories = [
     { name: 'Crypto', value: 'crypto', icon: 'fa-bitcoin-sign' },
     { name: 'Tech', value: 'tech', icon: 'fa-microchip' },
@@ -297,7 +317,7 @@ async function loadExplore() {
             <div class="explore-section" id="${cat.value}">
                 <div class="section-header">
                     <h2><i class="fa-solid ${cat.icon}"></i> ${cat.name}</h2>
-                    <a href="#" class="view-all">View All ›</a>
+                    <a href="#" class="view-all">View All</a>
                 </div>
                 <div class="categories">
                     ${cards}
@@ -309,7 +329,7 @@ async function loadExplore() {
 
 loadExplore();
 
-// Search functionality
+// ========== SEARCH (Homepage) ==========
 const searchInput = document.querySelector('.hero-search input');
 const searchBtn = document.querySelector('.search-btn');
 
@@ -359,7 +379,7 @@ if (searchBtn) {
     });
 }
 
-// Explore search functionality
+// ========== SEARCH (Explore page) ==========
 const exploreInput = document.querySelector('.explore-search input');
 const exploreBtn = document.querySelector('.explore-search .search-btn');
 
@@ -391,7 +411,7 @@ if (exploreBtn) {
     });
 }
 
-// Custom dropdowns
+// ========== CUSTOM DROPDOWNS ==========
 document.querySelectorAll('.custom-select').forEach(select => {
     const selected = select.querySelector('.custom-select-selected');
     const options = select.querySelector('.custom-select-options');
@@ -418,7 +438,7 @@ document.addEventListener('click', function() {
     document.querySelectorAll('.custom-select-options').forEach(o => o.classList.remove('open'));
 });
 
-// Image preview for logo upload
+// ========== IMAGE PREVIEW ==========
 const logoInput = document.getElementById('group-logo');
 if (logoInput) {
     logoInput.addEventListener('change', function() {
