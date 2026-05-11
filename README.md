@@ -6,7 +6,7 @@ Find WhatsApp and Telegram groups by category. Tech, Education, Crypto, Gaming a
 
 ## Built with
 - HTML, CSS, JavaScript
-- Supabase (coming soon)
+- Supabase
 
 ## Status
 Live and improving.
