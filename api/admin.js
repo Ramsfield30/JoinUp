@@ -6,6 +6,7 @@ const supabase = createClient(
 )
 
 const ADMIN_SECRET = process.env.ADMIN_SECRET
+console.log('Secret from env:', process.env.ADMIN_SECRET)
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*')
