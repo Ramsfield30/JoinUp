@@ -1,463 +1,412 @@
-const themeToggle = document.getElementById('themeToggle');
-const themeWave = document.getElementById('themeWave');
-const themeIcon = document.querySelector('.theme-icon');
-const htmlElement = document.documentElement;
+// ── THEME ──
+const themeToggle = document.getElementById('themeToggle')
+const themeWave = document.getElementById('themeWave')
+const themeIcon = document.querySelector('.theme-icon')
+const htmlElement = document.documentElement
 
 function updateIcon(theme) {
-    if (theme === 'dark') {
-        themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>';
-    } else {
-        themeIcon.innerHTML = '<path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>';
-    }
+  if (theme === 'dark') {
+    themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>'
+  } else {
+    themeIcon.innerHTML = '<path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>'
+  }
 }
 
 function toggleTheme() {
-    const currentTheme = htmlElement.getAttribute('data-theme');
-    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-    themeIcon.style.transform = 'rotate(360deg)';
-    themeWave.classList.add('active');
-    setTimeout(() => {
-        htmlElement.setAttribute('data-theme', newTheme);
-        updateIcon(newTheme);
-    }, 50);
-    setTimeout(() => {
-        themeIcon.style.transform = 'rotate(0)';
-    }, 300);
-    setTimeout(() => {
-        themeWave.classList.remove('active');
-    }, 600);
-    localStorage.setItem('theme', newTheme);
+  const currentTheme = htmlElement.getAttribute('data-theme')
+  const newTheme = currentTheme === 'light' ? 'dark' : 'light'
+  themeIcon.style.transform = 'rotate(360deg)'
+  themeWave.classList.add('active')
+  setTimeout(() => {
+    htmlElement.setAttribute('data-theme', newTheme)
+    updateIcon(newTheme)
+  }, 50)
+  setTimeout(() => { themeIcon.style.transform = 'rotate(0)' }, 300)
+  setTimeout(() => { themeWave.classList.remove('active') }, 600)
+  localStorage.setItem('theme', newTheme)
 }
 
-const savedTheme = localStorage.getItem('theme') || 'light';
-htmlElement.setAttribute('data-theme', savedTheme);
-updateIcon(savedTheme);
+const savedTheme = localStorage.getItem('theme') || 'dark'
+htmlElement.setAttribute('data-theme', savedTheme)
+updateIcon(savedTheme)
+if (themeToggle) themeToggle.addEventListener('click', toggleTheme)
 
-themeToggle.addEventListener('click', toggleTheme);
 
-// ========== VERIFIED BADGE ==========
+// ── HELPERS ──
 function getVerifiedBadge(verified) {
-    if (!verified) return '';
-    return `<svg class="verified-badge" viewBox="0 0 24 24" width="16" height="16">
-        <polygon points="12,1.8 14.6,3.4 17.6,3 18.8,5.8 21.6,7 21.2,10 22.8,12 21.2,14 21.6,17 18.8,18.2 17.6,21 14.6,20.6 12,22.2 9.4,20.6 6.4,21 5.2,18.2 2.4,17 2.8,14 1.2,12 2.8,10 2.4,7 5.2,5.8 6.4,3 9.4,3.4" fill="#1DA1F2"/>
-        <path d="M9.5 13.8 L7.3 11.6 L6 12.9 L9.5 16.4 L18 7.9 L16.7 6.6 Z" fill="white"/>
-    </svg>`;
+  if (!verified) return ''
+  return `<svg class="verified-badge" viewBox="0 0 24 24" width="16" height="16">
+    <polygon points="12,1.8 14.6,3.4 17.6,3 18.8,5.8 21.6,7 21.2,10 22.8,12 21.2,14 21.6,17 18.8,18.2 17.6,21 14.6,20.6 12,22.2 9.4,20.6 6.4,21 5.2,18.2 2.4,17 2.8,14 1.2,12 2.8,10 2.4,7 5.2,5.8 6.4,3 9.4,3.4" fill="#1DA1F2"/>
+    <path d="M9.5 13.8 L7.3 11.6 L6 12.9 L9.5 16.4 L18 7.9 L16.7 6.6 Z" fill="white"/>
+  </svg>`
 }
 
-// ========== PLATFORM BADGE ==========
 function getPlatformBadge(platform, type) {
-    return `<span class="badge ${platform}">
-        <i class="fa-brands fa-${platform}"></i> ${type || ''}
-    </span>`;
+  return `<span class="badge ${platform}">
+    <i class="fa-brands fa-${platform}"></i> ${type || ''}
+  </span>`
 }
 
-// ========== AVATAR ==========
-function getAvatar(name, platform, image_url) {
-    if (image_url) {
-        return `<div class="card-img" style="background:#000;">
-            <img src="${image_url}" style="width:100%; height:100%; object-fit:cover; border-radius:10px 10px 0 0;">
-        </div>`;
-    }
-    const letter = name.charAt(0).toUpperCase();
-    const color = platform === 'telegram'
-        ? 'linear-gradient(135deg, #0088cc, #005f8e)'
-        : 'linear-gradient(135deg, #25a244, #1a7a32)';
-    return `<div class="card-img" style="background:${color}; display:flex; align-items:center; justify-content:center; font-size:40px; font-weight:bold; color:white;">${letter}</div>`;
+function formatMembers(members) {
+  if (!members) return ''
+  if (members >= 1000) return `${(members / 1000).toFixed(1)}K members`
+  return `${members} members`
 }
 
-// ========== SKELETON LOADING ==========
-function showSkeletons(container, count = 4) {
-    container.innerHTML = '';
-    for (let i = 0; i < count; i++) {
-        container.innerHTML += `
-            <div class="skeleton-card">
-                <div class="skeleton skeleton-img"></div>
-                <div class="skeleton skeleton-line"></div>
-                <div class="skeleton skeleton-line short"></div>
-                <div class="skeleton skeleton-btn"></div>
-            </div>
-        `;
-    }
-}
-
-// ========== SUBMIT FORM ==========
-const form = document.querySelector('form');
-if (form) {
-    form.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const btn = document.querySelector('.submit-form-btn');
-        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting...';
-        btn.disabled = true;
-
-        const { data: existing } = await db
-            .from('groups')
-            .select('link')
-            .eq('link', form['group-link'].value);
-
-        if (existing && existing.length > 0) {
-            btn.innerHTML = 'Submit Group';
-            btn.disabled = false;
-            const linkInput = document.getElementById('group-link');
-            linkInput.style.border = '2px solid red';
-            let errMsg = document.getElementById('link-error');
-            if (!errMsg) {
-                errMsg = document.createElement('p');
-                errMsg.id = 'link-error';
-                errMsg.style.cssText = 'color:red; font-size:13px; margin-top:5px; padding-left:15px;';
-                linkInput.parentNode.insertBefore(errMsg, linkInput.nextSibling);
-            }
-            errMsg.textContent = 'This group is already listed on JoinUp!';
-            return;
+function createGroupCard(group) {
+  return `
+    <div class="group-card">
+      <div class="group-card-header">
+        ${group.image_url
+          ? `<img src="${group.image_url}" class="group-avatar" alt="${group.name}" onerror="this.style.display='none'">`
+          : `<div class="group-avatar-placeholder"><i class="fa-solid fa-users"></i></div>`
         }
-
-        let image_url = null;
-        const logoFile = document.getElementById('group-logo').files[0];
-        if (logoFile) {
-            const fileExt = logoFile.name.split('.').pop();
-            const fileName = `${Date.now()}.${fileExt}`;
-
-            const { data: uploadData, error: uploadError } = await db
-                .storage
-                .from('logos')
-                .upload(fileName, logoFile);
-
-            if (!uploadError) {
-                const { data: urlData } = await db
-                    .storage
-                    .from('logos')
-                    .getPublicUrl(fileName);
-                image_url = urlData.publicUrl;
-            }
-        }
-
-        const { error } = await db
-            .from('groups')
-            .insert({
-                name: form['group-name'].value,
-                platform: form['platform'].value,
-                type: form['type'].value,
-                category: form['category'].value,
-                link: form['group-link'].value,
-                description: form['description'].value,
-                image_url: image_url,
-                email: form['email'] && form['email'].value ? form['email'].value : null,
-                status: 'pending'
-            });
-
-        if (!error) {
-            form.innerHTML = `
-                <div style="text-align:center; padding: 30px;">
-                    <i class="fa-solid fa-circle-check" style="font-size:60px; color:#25a244;"></i>
-                    <h2 style="color:var(--text-primary); margin-top:15px;">Successfully Submitted!</h2>
-                    <p style="color:gray;">Our team will review your submission shortly.</p>
-                    <a href="/" style="color:#25a244;">Back to Home</a>
-                </div>
-            `;
-        } else {
-            form.innerHTML = `
-                <div style="text-align:center; padding: 30px;">
-                    <i class="fa-solid fa-circle-xmark" style="font-size:60px; color:red;"></i>
-                    <h2 style="color:var(--text-primary); margin-top:15px;">Something Went Wrong!</h2>
-                    <p style="color:gray;">Please check your details and try again.</p>
-                    <a href="/submit" style="color:red;">Try Again</a>
-                </div>
-            `;
-        }
-    });
+        <div class="group-info">
+          <h3>${group.name} ${getVerifiedBadge(group.verified)}</h3>
+          <p>${group.description || ''}</p>
+        </div>
+      </div>
+      <div class="group-card-footer">
+        ${getPlatformBadge(group.platform, group.type)}
+        <span class="category-badge">${group.category}</span>
+        ${group.members ? `<span class="members-count"><i class="fa-solid fa-users"></i> ${formatMembers(group.members)}</span>` : ''}
+        <a href="${group.link}" target="_blank" rel="noopener noreferrer" class="join-btn">
+          Join ${group.type === 'channel' ? 'Channel' : 'Group'}
+        </a>
+      </div>
+    </div>
+  `
 }
 
-// ========== LOAD TRENDING GROUPS ==========
-async function loadTrending() {
-    const container = document.querySelector('.trending-scroll');
-    if (!container) return;
+// ── API CALLS ──
+async function fetchGroups(params = {}) {
+  const query = new URLSearchParams(params).toString()
+  const res = await fetch(`/api/groups${query ? '?' + query : ''}`)
+  const data = await res.json()
+  if (!data.success) throw new Error(data.error)
+  return data.data
+}
 
-    showSkeletons(container, 3);
 
-    const { data, error } = await db
-        .from('groups')
-        .select('*')
-        .eq('status', 'approved')
-        .eq('featured', true);
+// ── SEARCH ──
+let searchTimeout = null
 
-    if (!data || data.length === 0) {
-        container.innerHTML = '';
-        return;
+function setupSearch() {
+  const searchInputs = document.querySelectorAll('input[type="search"]')
+  const searchBtns = document.querySelectorAll('.search-btn')
+
+  searchInputs.forEach(input => {
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') handleSearch(input.value.trim())
+    })
+    input.addEventListener('input', () => {
+      clearTimeout(searchTimeout)
+      searchTimeout = setTimeout(() => {
+        if (input.value.trim().length >= 2) handleSearch(input.value.trim())
+        if (input.value.trim().length === 0) handleSearch('')
+      }, 400)
+    })
+  })
+
+  searchBtns.forEach((btn, i) => {
+    btn.addEventListener('click', () => {
+      const input = searchInputs[i]
+      if (input) handleSearch(input.value.trim())
+    })
+  })
+}
+
+async function handleSearch(query) {
+  const page = getCurrentPage()
+
+  if (page === 'home') {
+    const latestContainer = document.querySelector('.latest-scroll')
+    const trendingContainer = document.querySelector('.trending-scroll')
+
+    if (!latestContainer) return
+
+    if (!query) {
+      loadHomePage()
+      return
     }
 
-    container.innerHTML = '';
-    data.forEach(group => {
-        container.innerHTML += `
-            <div class="trending-card">
-                <div style="position:relative;">
-                    ${getAvatar(group.name, group.platform, group.image_url)}
-                    <span class="top-badge">TOP</span>
-                </div>
-                ${getPlatformBadge(group.platform, group.type)}
-                <p class="trending-name">${group.name} ${getVerifiedBadge(group.verified)}</p>
-                <p class="trending-desc">${group.description}</p>
-                <div class="card-buttons" style="padding:10px;">
-                    <a href="${group.link}" target="_blank">Join Now</a>
-                </div>
-            </div>
-        `;
-    });
-}
+    latestContainer.innerHTML = '<div class="loading">Searching...</div>'
+    if (trendingContainer) trendingContainer.innerHTML = ''
 
-loadTrending();
+    try {
+      const groups = await fetchGroups({ search: query })
+      if (groups.length === 0) {
+        latestContainer.innerHTML = '<div class="empty-state"><i class="fa-solid fa-search"></i><p>No groups found for "<strong>' + query + '</strong>"</p></div>'
+      } else {
+        latestContainer.innerHTML = groups.map(createGroupCard).join('')
+      }
+    } catch (err) {
+      latestContainer.innerHTML = '<div class="error-state">Search failed. Try again.</div>'
+    }
+  }
 
-// ========== LOAD LATEST GROUPS ==========
-async function loadGroups() {
-    const container = document.querySelector('.latest-scroll');
-    if (!container) return;
+  if (page === 'explore') {
+    const container = document.getElementById('explore-container')
+    if (!container) return
 
-    showSkeletons(container, 4);
-
-    const { data, error } = await db
-        .from('groups')
-        .select('*')
-        .eq('status', 'approved');
-
-    if (error) {
-        console.log('Error:', error);
-        return;
+    if (!query) {
+      loadExplorePage()
+      return
     }
 
-    container.innerHTML = '';
-    data.forEach(group => {
-        container.innerHTML += `
-            <div class="latest-card" data-category="${group.category}">
-                ${getAvatar(group.name, group.platform, group.image_url)}
-                ${getPlatformBadge(group.platform, group.type)}
-                <h3>${group.name} ${getVerifiedBadge(group.verified)}</h3>
-                <p>${group.description}</p>
-                <div class="card-buttons">
-                    <a href="${group.link}" target="_blank">Join Now</a>
-                </div>
-            </div>
-        `;
-    });
+    container.innerHTML = '<div class="loading">Searching...</div>'
 
-    setupFilter();
-}
-
-loadGroups();
-
-// ========== FILTER ==========
-function setupFilter() {
-    const navLinks = document.querySelectorAll('header nav a');
-    const latestScroll = document.querySelector('.latest-scroll');
-
-    if (!latestScroll) return;
-
-    navLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            navLinks.forEach(l => l.classList.remove('active'));
-            this.classList.add('active');
-            const category = this.getAttribute('data-category');
-            filterGroups(category);
-        });
-    });
-}
-
-function filterGroups(category) {
-    const cards = document.querySelectorAll('.latest-scroll .latest-card');
-    cards.forEach(card => {
-        if (category === 'all') {
-            card.style.display = 'block';
-        } else {
-            card.style.display = card.getAttribute('data-category') === category ? 'block' : 'none';
-        }
-    });
-}
-
-// ========== EXPLORE PAGE ==========
-const categories = [
-    { name: 'Crypto', value: 'crypto', icon: 'fa-bitcoin-sign' },
-    { name: 'Tech', value: 'tech', icon: 'fa-microchip' },
-    { name: 'Education', value: 'education', icon: 'fa-graduation-cap' },
-    { name: 'Business', value: 'business', icon: 'fa-briefcase' },
-    { name: 'Gaming', value: 'gaming', icon: 'fa-gamepad' },
-    { name: 'Religious', value: 'religious', icon: 'fa-hands-praying' },
-    { name: 'Football', value: 'football', icon: 'fa-futbol' },
-    { name: 'Fun', value: 'fun', icon: 'fa-face-laugh' },
-    { name: 'Entertainment', value: 'entertainment', icon: 'fa-tv' },
-];
-
-async function loadExplore() {
-    const container = document.getElementById('explore-container');
-    if (!container) return;
-
-    for (const cat of categories) {
-        const { data, error } = await db
-            .from('groups')
-            .select('*')
-            .eq('category', cat.value)
-            .eq('status', 'approved')
-            .limit(3);
-
-        const cards = data && data.length > 0
-            ? data.map(group => `
-                <div class="card">
-                    ${getAvatar(group.name, group.platform, group.image_url)}
-                    ${getPlatformBadge(group.platform, group.type)}
-                    <h3>${group.name} ${getVerifiedBadge(group.verified)}</h3>
-                    <p>${group.description}</p>
-                    <div class="card-buttons">
-                        <a href="${group.link}" target="_blank">Join Now</a>
-                    </div>
-                </div>
-            `).join('')
-            : `<div class="empty-category">
-                <i class="fa-solid fa-box-open"></i>
-                <p>Nothing here yet. <a href="/submit">Be the first to submit!</a></p>
-               </div>`;
-
-        container.innerHTML += `
-            <div class="explore-section" id="${cat.value}">
-                <div class="section-header">
-                    <h2><i class="fa-solid ${cat.icon}"></i> ${cat.name}</h2>
-                    <a href="#" class="view-all">View All</a>
-                </div>
-                <div class="categories">
-                    ${cards}
-                </div>
-            </div>
-        `;
+    try {
+      const groups = await fetchGroups({ search: query })
+      if (groups.length === 0) {
+        container.innerHTML = '<div class="empty-state"><i class="fa-solid fa-search"></i><p>No groups found for "<strong>' + query + '</strong>"</p></div>'
+      } else {
+        container.innerHTML = `
+          <div class="section-header"><h2>Search Results (${groups.length})</h2></div>
+          <div class="groups-grid">${groups.map(createGroupCard).join('')}</div>
+        `
+      }
+    } catch (err) {
+      container.innerHTML = '<div class="error-state">Search failed. Try again.</div>'
     }
+  }
 }
 
-loadExplore();
 
-// ========== SEARCH (Homepage) ==========
-const searchInput = document.querySelector('.hero-search input');
-const searchBtn = document.querySelector('.search-btn');
+// ── PAGE DETECTION ──
+function getCurrentPage() {
+  const path = window.location.pathname
+  if (path === '/' || path === '/index.html') return 'home'
+  if (path.includes('/explore')) return 'explore'
+  if (path.includes('/submit')) return 'submit'
+  return 'other'
+}
 
-function searchGroups(query) {
-    const cards = document.querySelectorAll('.latest-scroll .latest-card');
-    const container = document.querySelector('.latest-scroll');
-    const q = query.toLowerCase().trim();
-    let visibleCount = 0;
 
-    cards.forEach(card => {
-        const name = card.querySelector('h3').textContent.toLowerCase();
-        const description = card.querySelector('p').textContent.toLowerCase();
+// ── HOME PAGE ──
+async function loadHomePage() {
+  const trendingContainer = document.querySelector('.trending-scroll')
+  const latestContainer = document.querySelector('.latest-scroll')
 
-        if (q === '' || name.includes(q) || description.includes(q)) {
-            card.style.display = 'block';
-            visibleCount++;
-        } else {
-            card.style.display = 'none';
-        }
-    });
+  if (!trendingContainer || !latestContainer) return
 
-    let noResults = document.getElementById('no-results');
-    if (!noResults) {
-        noResults = document.createElement('div');
-        noResults.id = 'no-results';
-        noResults.style.cssText = 'text-align:center; padding:30px; color:gray; width:100%;';
-        container.appendChild(noResults);
-    }
+  trendingContainer.innerHTML = '<div class="loading">Loading...</div>'
+  latestContainer.innerHTML = '<div class="loading">Loading...</div>'
 
-    if (visibleCount === 0 && q !== '') {
-        noResults.style.display = 'block';
-        noResults.innerHTML = '<i class="fa-solid fa-magnifying-glass" style="font-size:30px; margin-bottom:10px; display:block;"></i> No groups found for "<strong>' + q + '</strong>"';
+  try {
+    // Load featured/trending
+    const trending = await fetchGroups({ featured: 'true', limit: 10 })
+    if (trending.length === 0) {
+      trendingContainer.innerHTML = '<div class="empty-state">No trending groups yet.</div>'
     } else {
-        noResults.style.display = 'none';
+      trendingContainer.innerHTML = trending.map(createGroupCard).join('')
     }
+
+    // Load latest
+    const latest = await fetchGroups({ limit: 20 })
+    if (latest.length === 0) {
+      latestContainer.innerHTML = '<div class="empty-state">No groups yet. <a href="/submit">Be the first to submit!</a></div>'
+    } else {
+      latestContainer.innerHTML = latest.map(createGroupCard).join('')
+    }
+  } catch (err) {
+    trendingContainer.innerHTML = '<div class="error-state">Failed to load groups.</div>'
+    latestContainer.innerHTML = '<div class="error-state">Failed to load groups.</div>'
+  }
 }
 
-if (searchInput) {
-    searchInput.addEventListener('input', function() {
-        searchGroups(this.value);
-    });
-}
 
-if (searchBtn) {
-    searchBtn.addEventListener('click', function() {
-        searchGroups(searchInput.value);
-    });
-}
+// ── CATEGORY FILTER (HOME) ──
+function setupCategoryFilter() {
+  const navLinks = document.querySelectorAll('nav a[data-category]')
+  navLinks.forEach(link => {
+    link.addEventListener('click', async (e) => {
+      e.preventDefault()
+      navLinks.forEach(l => l.classList.remove('active'))
+      link.classList.add('active')
 
-// ========== SEARCH (Explore page) ==========
-const exploreInput = document.querySelector('.explore-search input');
-const exploreBtn = document.querySelector('.explore-search .search-btn');
+      const category = link.getAttribute('data-category')
+      const latestContainer = document.querySelector('.latest-scroll')
+      if (!latestContainer) return
 
-function searchExplore(query) {
-    const cards = document.querySelectorAll('#explore-container .card');
-    const q = query.toLowerCase().trim();
+      latestContainer.innerHTML = '<div class="loading">Loading...</div>'
 
-    cards.forEach(card => {
-        const name = card.querySelector('h3').textContent.toLowerCase();
-        const description = card.querySelector('p').textContent.toLowerCase();
-
-        if (q === '' || name.includes(q) || description.includes(q)) {
-            card.style.display = 'block';
+      try {
+        const groups = await fetchGroups({ category, limit: 20 })
+        if (groups.length === 0) {
+          latestContainer.innerHTML = '<div class="empty-state">No groups in this category yet.</div>'
         } else {
-            card.style.display = 'none';
+          latestContainer.innerHTML = groups.map(createGroupCard).join('')
         }
-    });
+      } catch (err) {
+        latestContainer.innerHTML = '<div class="error-state">Failed to load groups.</div>'
+      }
+    })
+  })
 }
 
-if (exploreInput) {
-    exploreInput.addEventListener('input', function() {
-        searchExplore(this.value);
-    });
+
+// ── EXPLORE PAGE ──
+const CATEGORIES = ['education', 'tech', 'entertainment', 'business', 'gaming', 'religious', 'football', 'fun', 'crypto']
+
+async function loadExplorePage() {
+  const container = document.getElementById('explore-container')
+  if (!container) return
+
+  container.innerHTML = '<div class="loading">Loading groups...</div>'
+
+  try {
+    const groups = await fetchGroups({ limit: 100 })
+
+    if (groups.length === 0) {
+      container.innerHTML = '<div class="empty-state">No groups yet. <a href="/submit">Submit the first one!</a></div>'
+      return
+    }
+
+    // Group by category
+    const byCategory = {}
+    groups.forEach(g => {
+      if (!byCategory[g.category]) byCategory[g.category] = []
+      byCategory[g.category].push(g)
+    })
+
+    let html = ''
+    CATEGORIES.forEach(cat => {
+      const catGroups = byCategory[cat] || []
+      if (catGroups.length === 0) return
+      html += `
+        <section id="${cat}">
+          <div class="section-header">
+            <h2>${cat.charAt(0).toUpperCase() + cat.slice(1)}</h2>
+          </div>
+          <div class="groups-grid">
+            ${catGroups.map(createGroupCard).join('')}
+          </div>
+        </section>
+      `
+    })
+
+    // Any uncategorized
+    const otherGroups = groups.filter(g => !CATEGORIES.includes(g.category))
+    if (otherGroups.length > 0) {
+      html += `
+        <section id="other">
+          <div class="section-header"><h2>Other</h2></div>
+          <div class="groups-grid">${otherGroups.map(createGroupCard).join('')}</div>
+        </section>
+      `
+    }
+
+    container.innerHTML = html
+  } catch (err) {
+    container.innerHTML = '<div class="error-state">Failed to load groups. Please try again.</div>'
+  }
 }
 
-if (exploreBtn) {
-    exploreBtn.addEventListener('click', function() {
-        searchExplore(exploreInput.value);
-    });
-}
 
-// ========== CUSTOM DROPDOWNS ==========
-document.querySelectorAll('.custom-select').forEach(select => {
-    const selected = select.querySelector('.custom-select-selected');
-    const options = select.querySelector('.custom-select-options');
-    const hiddenInput = select.nextElementSibling;
+// ── SUBMIT PAGE ──
+function setupSubmitForm() {
+  const form = document.querySelector('form')
+  if (!form) return
 
-    selected.addEventListener('click', function(e) {
-        e.stopPropagation();
-        document.querySelectorAll('.custom-select-options').forEach(o => o.classList.remove('open'));
-        options.classList.toggle('open');
-    });
+  // Custom selects
+  document.querySelectorAll('.custom-select').forEach(select => {
+    const selected = select.querySelector('.custom-select-selected')
+    const options = select.querySelector('.custom-select-options')
+
+    selected.addEventListener('click', () => {
+      options.classList.toggle('open')
+    })
 
     options.querySelectorAll('.custom-option').forEach(option => {
-        option.addEventListener('click', function() {
-            selected.textContent = this.textContent;
-            hiddenInput.value = this.getAttribute('data-value');
-            options.querySelectorAll('.custom-option').forEach(o => o.classList.remove('selected'));
-            this.classList.add('selected');
-            options.classList.remove('open');
-        });
-    });
-});
+      option.addEventListener('click', () => {
+        selected.textContent = option.textContent
+        const hiddenInput = document.getElementById(select.id.replace('-select', '-value'))
+        if (hiddenInput) hiddenInput.value = option.getAttribute('data-value')
+        options.classList.remove('open')
+      })
+    })
+  })
 
-document.addEventListener('click', function() {
-    document.querySelectorAll('.custom-select-options').forEach(o => o.classList.remove('open'));
-});
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.custom-select')) {
+      document.querySelectorAll('.custom-select-options').forEach(o => o.classList.remove('open'))
+    }
+  })
 
-// ========== IMAGE PREVIEW ==========
-const logoInput = document.getElementById('group-logo');
-if (logoInput) {
-    logoInput.addEventListener('change', function() {
-        const file = this.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('preview-img').src = e.target.result;
-                document.getElementById('image-preview').style.display = 'block';
-                document.getElementById('upload-text').textContent = file.name;
-            };
-            reader.readAsDataURL(file);
+  // Form submit
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault()
+
+    const submitBtn = form.querySelector('button[type="submit"]')
+    if (submitBtn) {
+      submitBtn.disabled = true
+      submitBtn.textContent = 'Submitting...'
+    }
+
+    const data = {
+      name: form.querySelector('[name="group-name"]')?.value?.trim(),
+      platform: document.getElementById('platform-value')?.value,
+      type: document.getElementById('type-value')?.value,
+      category: document.getElementById('category-value')?.value,
+      description: form.querySelector('[name="description"]')?.value?.trim(),
+      link: form.querySelector('[name="link"]')?.value?.trim(),
+      members: form.querySelector('[name="members"]')?.value?.trim(),
+      email: form.querySelector('[name="email"]')?.value?.trim()
+    }
+
+    try {
+      const res = await fetch('/api/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+
+      const result = await res.json()
+
+      if (result.success) {
+        form.innerHTML = `
+          <div class="success-state">
+            <i class="fa-solid fa-circle-check"></i>
+            <h3>Submitted Successfully!</h3>
+            <p>Your group has been submitted for review. We'll approve it within 24 hours.</p>
+            <a href="/" class="join-btn">Back to Home</a>
+          </div>
+        `
+      } else {
+        alert(result.error || 'Submission failed. Please try again.')
+        if (submitBtn) {
+          submitBtn.disabled = false
+          submitBtn.textContent = 'Submit Group'
         }
-    });
+      }
+    } catch (err) {
+      alert('Something went wrong. Please try again.')
+      if (submitBtn) {
+        submitBtn.disabled = false
+        submitBtn.textContent = 'Submit Group'
+      }
+    }
+  })
 }
 
-// Register service worker
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js');
-    });
-}
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded', () => {
+  const page = getCurrentPage()
+
+  setupSearch()
+
+  if (page === 'home') {
+    loadHomePage()
+    setupCategoryFilter()
+  }
+
+  if (page === 'explore') {
+    loadExplorePage()
+  }
+
+  if (page === 'submit') {
+    setupSubmitForm()
+  }
+})
