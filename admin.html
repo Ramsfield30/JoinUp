@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JoinUp Admin</title>
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    body { background: #0a0a0a; }
+
+    .admin-wrapper {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .admin-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .admin-header h1 {
+      font-size: 22px;
+      font-weight: 800;
+      color: white;
+    }
+
+    .admin-stats {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .admin-stat {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 16px 24px;
+      text-align: center;
+      flex: 1;
+      min-width: 100px;
+    }
+
+    .admin-stat h3 {
+      font-size: 28px;
+      font-weight: 900;
+      color: #0088cc;
+    }
+
+    .admin-stat p {
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+      margin-top: 4px;
+    }
+
+    .admin-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .admin-tab {
+      padding: 10px 20px;
+      border-radius: 50px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: transparent;
+      color: rgba(255,255,255,0.6);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .admin-tab.active {
+      background: #0088cc;
+      border-color: #0088cc;
+      color: white;
+    }
+
+    .admin-group-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 12px;
+    }
+
+    .admin-group-card h3 {
+      font-size: 16px;
+      font-weight: 800;
+      color: white;
+      margin-bottom: 6px;
+    }
+
+    .admin-group-card p {
+      font-size: 13px;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 12px;
+    }
+
+    .admin-group-meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .admin-group-meta span {
+      background: rgba(255,255,255,0.08);
+      padding: 4px 10px;
+      border-radius: 50px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.6);
+    }
+
+    .admin-group-link {
+      font-size: 12px;
+      color: #0088cc;
+      word-break: break-all;
+      margin-bottom: 14px;
+      display: block;
+    }
+
+    .admin-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .admin-btn {
+      padding: 8px 16px;
+      border-radius: 50px;
+      border: none;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .admin-btn:hover { opacity: 0.8; }
+    .btn-approve { background: #25a244; color: white; }
+    .btn-reject { background: #ff4444; color: white; }
+    .btn-feature { background: #FFD700; color: #000; }
+    .btn-verify { background: #1DA1F2; color: white; }
+    .btn-logout { background: rgba(255,255,255,0.1); color: white; }
+
+    /* LOGIN */
+    .login-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .login-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 24px;
+      padding: 40px 32px;
+      width: 100%;
+      max-width: 380px;
+      text-align: center;
+    }
+
+    .login-card img {
+      height: 60px;
+      margin-bottom: 20px;
+    }
+
+    .login-card h2 {
+      color: white;
+      font-size: 20px;
+      margin-bottom: 24px;
+    }
+
+    .login-input {
+      width: 100%;
+      padding: 14px 20px;
+      border-radius: 50px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.08);
+      color: white;
+      font-size: 15px;
+      outline: none;
+      margin-bottom: 12px;
+      box-sizing: border-box;
+      font-family: inherit;
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 14px;
+      border-radius: 50px;
+      border: none;
+      background: linear-gradient(135deg, #0088cc, #25a244);
+      color: white;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: inherit;
+      margin-top: 4px;
+    }
+
+    .login-error {
+      color: #ff4444;
+      font-size: 13px;
+      margin-top: 10px;
+      display: none;
+    }
+
+    #admin-panel { display: none; }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN -->
+  <div class="login-screen" id="login-screen">
+    <div class="login-card">
+      <img src="/joinup-logo.png" alt="JoinUp" />
+      <h2>Admin Panel</h2>
+      <input type="password" class="login-input" id="secret-input" placeholder="Enter admin secret" />
+      <button class="login-btn" onclick="adminLogin()">Login</button>
+      <p class="login-error" id="login-error">Wrong secret! Try again.</p>
+    </div>
+  </div>
+
+  <!-- ADMIN PANEL -->
+  <div id="admin-panel">
+    <div class="admin-wrapper">
+      <div class="admin-header">
+        <h1>🔐 JoinUp Admin</h1>
+        <button class="admin-btn btn-logout" onclick="adminLogout()">Logout</button>
+      </div>
+
+      <div class="admin-stats">
+        <div class="admin-stat">
+          <h3 id="stat-total">-</h3>
+          <p>Total Groups</p>
+        </div>
+        <div class="admin-stat">
+          <h3 id="stat-pending" style="color: #FFD700;">-</h3>
+          <p>Pending</p>
+        </div>
+        <div class="admin-stat">
+          <h3 id="stat-approved" style="color: #25a244;">-</h3>
+          <p>Approved</p>
+        </div>
+      </div>
+
+      <div class="admin-tabs">
+        <button class="admin-tab active" onclick="switchTab('pending')">⏳ Pending</button>
+        <button class="admin-tab" onclick="switchTab('all')">📋 All Groups</button>
+      </div>
+
+      <div id="admin-groups-container">
+        <div class="loading" style="color:rgba(255,255,255,0.5); text-align:center; padding:40px;">Loading...</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let adminSecret = ''
+    let currentTab = 'pending'
+
+    async function adminLogin() {
+      const secret = document.getElementById('secret-input').value.trim()
+      if (!secret) return
+
+      try {
+        const res = await fetch('/api/admin?action=stats', {
+          headers: { 'x-admin-secret': secret }
+        })
+        const data = await res.json()
+
+        if (data.success) {
+          adminSecret = secret
+          sessionStorage.setItem('adminSecret', secret)
+          document.getElementById('login-screen').style.display = 'none'
+          document.getElementById('admin-panel').style.display = 'block'
+          loadStats()
+          loadGroups('pending')
+        } else {
+          document.getElementById('login-error').style.display = 'block'
+        }
+      } catch (err) {
+        document.getElementById('login-error').style.display = 'block'
+      }
+    }
+
+    function adminLogout() {
+      adminSecret = ''
+      sessionStorage.removeItem('adminSecret')
+      document.getElementById('login-screen').style.display = 'flex'
+      document.getElementById('admin-panel').style.display = 'none'
+      document.getElementById('secret-input').value = ''
+    }
+
+    async function loadStats() {
+      try {
+        const res = await fetch('/api/admin?action=stats', {
+          headers: { 'x-admin-secret': adminSecret }
+        })
+        const data = await res.json()
+        if (data.success) {
+          document.getElementById('stat-total').textContent = data.data.total
+          document.getElementById('stat-pending').textContent = data.data.pending
+          document.getElementById('stat-approved').textContent = data.data.approved
+        }
+      } catch (err) {}
+    }
+
+    async function loadGroups(tab) {
+      const container = document.getElementById('admin-groups-container')
+      container.innerHTML = '<div style="color:rgba(255,255,255,0.5); text-align:center; padding:40px;">Loading...</div>'
+
+      try {
+        const res = await fetch(`/api/admin?action=${tab}`, {
+          headers: { 'x-admin-secret': adminSecret }
+        })
+        const data = await res.json()
+
+        if (!data.success || data.data.length === 0) {
+          container.innerHTML = '<div style="color:rgba(255,255,255,0.5); text-align:center; padding:40px;">No groups found.</div>'
+          return
+        }
+
+        container.innerHTML = data.data.map(group => `
+          <div class="admin-group-card" id="group-${group.id}">
+            <h3>${group.name}</h3>
+            <p>${group.description || 'No description'}</p>
+            <div class="admin-group-meta">
+              <span>${group.platform}</span>
+              <span>${group.type}</span>
+              <span>${group.category}</span>
+              <span>${group.status}</span>
+              ${group.featured ? '<span style="color:#FFD700">⭐ Featured</span>' : ''}
+              ${group.verified ? '<span style="color:#1DA1F2">✅ Verified</span>' : ''}
+              ${group.members ? '<span>👥 ' + group.members + '</span>' : ''}
+            </div>
+            <a class="admin-group-link" href="${group.link}" target="_blank">${group.link}</a>
+            ${group.email ? `<p style="font-size:12px;color:rgba(255,255,255,0.4);">📧 ${group.email}</p>` : ''}
+            <div class="admin-actions">
+              ${group.status === 'pending' ? `<button class="admin-btn btn-approve" onclick="approveGroup(${group.id})">✅ Approve</button>` : ''}
+              <button class="admin-btn btn-reject" onclick="rejectGroup(${group.id})">🗑️ Delete</button>
+              <button class="admin-btn btn-feature" onclick="featureGroup(${group.id}, ${!group.featured})">${group.featured ? '⭐ Unfeature' : '⭐ Feature'}</button>
+              <button class="admin-btn btn-verify" onclick="verifyGroup(${group.id}, ${!group.verified})">${group.verified ? '❌ Unverify' : '✅ Verify'}</button>
+            </div>
+          </div>
+        `).join('')
+      } catch (err) {
+        container.innerHTML = '<div style="color:#ff4444; text-align:center; padding:40px;">Failed to load groups.</div>'
+      }
+    }
+
+    function switchTab(tab) {
+      currentTab = tab
+      document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'))
+      event.target.classList.add('active')
+      loadGroups(tab)
+    }
+
+    async function approveGroup(id) {
+      try {
+        await fetch('/api/admin?action=approve', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-admin-secret': adminSecret },
+          body: JSON.stringify({ id })
+        })
+        document.getElementById(`group-${id}`)?.remove()
+        loadStats()
+      } catch (err) { alert('Failed to approve') }
+    }
+
+    async function rejectGroup(id) {
+      if (!confirm('Delete this group?')) return
+      try {
+        await fetch('/api/admin?action=reject', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-admin-secret': adminSecret },
+          body: JSON.stringify({ id })
+        })
+        document.getElementById(`group-${id}`)?.remove()
+        loadStats()
+      } catch (err) { alert('Failed to delete') }
+    }
+
+    async function featureGroup(id, featured) {
+      try {
+        await fetch('/api/admin?action=feature', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-admin-secret': adminSecret },
+          body: JSON.stringify({ id, featured })
+        })
+        loadGroups(currentTab)
+      } catch (err) { alert('Failed to update') }
+    }
+
+    async function verifyGroup(id, verified) {
+      try {
+        await fetch('/api/admin?action=verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-admin-secret': adminSecret },
+          body: JSON.stringify({ id, verified })
+        })
+        loadGroups(currentTab)
+      } catch (err) { alert('Failed to update') }
+    }
+
+    // Auto-login if session exists
+    window.addEventListener('DOMContentLoaded', () => {
+      const saved = sessionStorage.getItem('adminSecret')
+      if (saved) {
+        document.getElementById('secret-input').value = saved
+        adminLogin()
+      }
+
+      document.getElementById('secret-input').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') adminLogin()
+      })
+    })
+  </script>
+</body>
+</html>
