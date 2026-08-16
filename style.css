@@ -268,21 +268,19 @@ header nav a.active {
 }
 
 .badge {
-    display: inline-block;
-    padding: 4px 10px;
-    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 50px;
     font-size: 11px;
-    margin: 8px 10px 0;
-    color: white;
+    font-weight: 700;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
-.badge.telegram {
-    background: #0088cc;
-}
-
-.badge.whatsapp {
-    background: #25a244;
-}
+.badge.telegram { background: rgba(0,136,204,0.2); color: #0088cc; }
+.badge.whatsapp { background: rgba(37,162,68,0.2); color: #25a244; }
 
 .hero {
     text-align: center;
@@ -1201,6 +1199,9 @@ html {
     padding: 16px;
     backdrop-filter: blur(10px);
     transition: transform 0.2s, border-color 0.2s;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .group-card:hover {
@@ -1218,8 +1219,8 @@ html {
     gap: 12px;
     margin-bottom: 12px;
     align-items: flex-start;
+    flex: 1;
 }
-
 .group-avatar {
     width: 48px;
     height: 48px;
@@ -1241,15 +1242,19 @@ html {
     flex-shrink: 0;
 }
 
+.group-info {
+    flex: 1;
+    min-width: 0;
+}
+
 .group-info h3 {
     font-size: 15px;
     font-weight: 800;
     color: var(--text-primary);
     margin: 0 0 4px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    flex-wrap: wrap;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .group-info p {
@@ -1270,18 +1275,23 @@ html {
 .group-card-footer {
     display: flex;
     align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
+    gap: 6px;
+    flex-wrap: nowrap;
+    overflow: hidden;
+    margin-top: auto;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
 }
-
 .category-badge {
-    background: rgba(255,255,255,0.1);
-    color: rgba(255,255,255,0.7);
-    padding: 4px 10px;
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.6);
+    padding: 3px 8px;
     border-radius: 50px;
     font-size: 11px;
     font-weight: 700;
     text-transform: capitalize;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 [data-theme="light"] .category-badge {
@@ -1303,11 +1313,12 @@ html {
     background: linear-gradient(135deg, #0088cc, #25a244);
     color: white;
     text-decoration: none;
-    padding: 7px 14px;
+    padding: 6px 12px;
     border-radius: 50px;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 800;
     white-space: nowrap;
+    flex-shrink: 0;
     transition: opacity 0.2s;
 }
 
@@ -1320,6 +1331,7 @@ html {
     grid-template-columns: 1fr;
     gap: 12px;
     padding: 0 15px 15px;
+    align-items: stretch;
 }
 
 /* ── STATES ── */
@@ -1450,6 +1462,11 @@ html {
 @media (min-width: 900px) {
     .groups-grid {
         grid-template-columns: repeat(3, 1fr);
+    }
+}
+@media (min-width: 600px) {
+    .groups-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
