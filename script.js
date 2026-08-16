@@ -389,8 +389,25 @@ function setupSubmitForm() {
     }
   })
 }
+async function loadStats() {
+  try {
+    const res = await fetch('/api/groups?limit=1000')
+    const data = await res.json()
+    if (!data.success) return
 
+    const total = data.data.length
+    const telegram = data.data.filter(g => g.platform === 'telegram').length
+    const whatsapp = data.data.filter(g => g.platform === 'whatsapp').length
 
+    const statTotal = document.getElementById('stat-total')
+    const statTelegram = document.getElementById('stat-telegram')
+    const statWhatsapp = document.getElementById('stat-whatsapp')
+
+    if (statTotal) statTotal.textContent = total + '+'
+    if (statTelegram) statTelegram.textContent = telegram + '+'
+    if (statWhatsapp) statWhatsapp.textContent = whatsapp + '+'
+  } catch (e) {}
+}
 // ── INIT ──
 document.addEventListener('DOMContentLoaded', () => {
   const page = getCurrentPage()
@@ -399,8 +416,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (page === 'home') {
     loadHomePage()
+    loadStats()
     setupCategoryFilter()
-  }
+}
 
   if (page === 'explore') {
     loadExplorePage()
