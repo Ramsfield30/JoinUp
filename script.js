@@ -78,13 +78,41 @@ function createGroupCard(group) {
   `
 }
 
+function createSearchResult(group) {
+  return `
+    <a href="${group.link}" target="_blank" rel="noopener noreferrer" class="search-result-item">
+      ${group.image_url
+        ? `<img src="${group.image_url}" class="search-result-avatar" alt="${group.name}" onerror="this.style.display='none'">`
+        : `<div class="search-result-avatar-placeholder"><i class="fa-solid fa-users"></i></div>`
+      }
+      <div class="search-result-info">
+        <h3>${group.name} ${getVerifiedBadge(group.verified)}</h3>
+        <p>${group.description || ''}</p>
+        <div class="search-result-meta">
+          <span class="badge ${group.platform}">${group.platform}</span>
+          <span class="category-badge">${group.category}</span>
+          ${group.members ? `<span class="members-count">${formatMembers(group.members)}</span>` : ''}
+        </div>
+      </div>
+      <div class="search-result-action">
+        <span class="join-btn">Join</span>
+      </div>
+    </a>
+  `
+}
+
+
 // ── API CALLS ──
 async function fetchGroups(params = {}) {
-  const query = new URLSearchParams(params).toString()
-  const res = await fetch(`/api/groups${query ? '?' + query : ''}`)
-  const data = await res.json()
-  if (!data.success) throw new Error(data.error)
-  return data.data
+  try {
+    const query = new URLSearchParams(params).toString()
+    const res = await fetch(`/api/groups${query ? '?' + query : ''}`)
+    const data = await res.json()
+    if (!data.success) throw new Error(data.error)
+    return data.data
+  } catch (err) {
+    return []
+  }
 }
 
 
@@ -122,7 +150,6 @@ async function handleSearch(query) {
   if (page === 'home') {
     const latestContainer = document.querySelector('.latest-scroll')
     const trendingContainer = document.querySelector('.trending-scroll')
-
     if (!latestContainer) return
 
     if (!query) {
@@ -130,15 +157,15 @@ async function handleSearch(query) {
       return
     }
 
-    latestContainer.innerHTML = '<div class="loading">Searching...</div>'
+    latestContainer.innerHTML = '<div class="search-loading"><div class="spinner"></div> Searching...</div>'
     if (trendingContainer) trendingContainer.innerHTML = ''
 
     try {
       const groups = await fetchGroups({ search: query })
       if (groups.length === 0) {
-        latestContainer.innerHTML = '<div class="empty-state"><i class="fa-solid fa-search"></i><p>No groups found for "<strong>' + query + '</strong>"</p></div>'
+        latestContainer.innerHTML = `<div class="empty-state"><i class="fa-solid fa-search"></i><p>No groups found for "<strong>${query}</strong>"</p></div>`
       } else {
-        latestContainer.innerHTML = groups.map(createGroupCard).join('')
+        latestContainer.innerHTML = groups.map(createSearchResult).join('')
       }
     } catch (err) {
       latestContainer.innerHTML = '<div class="error-state">Search failed. Try again.</div>'
@@ -154,16 +181,20 @@ async function handleSearch(query) {
       return
     }
 
-    container.innerHTML = '<div class="loading">Searching...</div>'
+    container.innerHTML = '<div class="search-loading"><div class="spinner"></div> Searching...</div>'
 
     try {
       const groups = await fetchGroups({ search: query })
       if (groups.length === 0) {
-        container.innerHTML = '<div class="empty-state"><i class="fa-solid fa-search"></i><p>No groups found for "<strong>' + query + '</strong>"</p></div>'
+        container.innerHTML = `<div class="empty-state"><i class="fa-solid fa-search"></i><p>No groups found for "<strong>${query}</strong>"</p></div>`
       } else {
         container.innerHTML = `
-          <div class="section-header"><h2>Search Results (${groups.length})</h2></div>
-          <div class="groups-grid">${groups.map(createGroupCard).join('')}</div>
+          <div class="section-header">
+            <h2>Results for "${query}" (${groups.length})</h2>
+          </div>
+          <div class="search-results-list">
+            ${groups.map(createSearchResult).join('')}
+          </div>
         `
       }
     } catch (err) {
@@ -190,11 +221,10 @@ async function loadHomePage() {
 
   if (!trendingContainer || !latestContainer) return
 
-  trendingContainer.innerHTML = '<div class="loading">Loading...</div>'
-  latestContainer.innerHTML = '<div class="loading">Loading...</div>'
+  trendingContainer.innerHTML = '<div class="search-loading"><div class="spinner"></div></div>'
+  latestContainer.innerHTML = '<div class="search-loading"><div class="spinner"></div></div>'
 
   try {
-    // Load featured/trending
     const trending = await fetchGroups({ featured: 'true', limit: 10 })
     if (trending.length === 0) {
       trendingContainer.innerHTML = '<div class="empty-state">No trending groups yet.</div>'
@@ -202,7 +232,6 @@ async function loadHomePage() {
       trendingContainer.innerHTML = trending.map(createGroupCard).join('')
     }
 
-    // Load latest
     const latest = await fetchGroups({ limit: 20 })
     if (latest.length === 0) {
       latestContainer.innerHTML = '<div class="empty-state">No groups yet. <a href="/submit">Be the first to submit!</a></div>'
@@ -229,7 +258,7 @@ function setupCategoryFilter() {
       const latestContainer = document.querySelector('.latest-scroll')
       if (!latestContainer) return
 
-      latestContainer.innerHTML = '<div class="loading">Loading...</div>'
+      latestContainer.innerHTML = '<div class="search-loading"><div class="spinner"></div></div>'
 
       try {
         const groups = await fetchGroups({ category, limit: 20 })
@@ -253,17 +282,16 @@ async function loadExplorePage() {
   const container = document.getElementById('explore-container')
   if (!container) return
 
-  container.innerHTML = '<div class="loading">Loading groups...</div>'
+  container.innerHTML = '<div class="search-loading"><div class="spinner"></div> Loading...</div>'
 
   try {
     const groups = await fetchGroups({ limit: 100 })
 
     if (groups.length === 0) {
-      container.innerHTML = '<div class="empty-state">No groups yet. <a href="/submit">Submit the first one!</a></div>'
+      container.innerHTML = '<div class="empty-state"><i class="fa-solid fa-search"></i><p>No groups yet. <a href="/submit">Submit the first one!</a></p></div>'
       return
     }
 
-    // Group by category
     const byCategory = {}
     groups.forEach(g => {
       if (!byCategory[g.category]) byCategory[g.category] = []
@@ -275,25 +303,27 @@ async function loadExplorePage() {
       const catGroups = byCategory[cat] || []
       if (catGroups.length === 0) return
       html += `
-  <section id="${cat}">
-    <div class="section-header">
-      <h2>${cat.charAt(0).toUpperCase() + cat.slice(1)}</h2>
-    </div>
-    <div class="groups-grid">
-      ${catGroups.map(createGroupCard).join('')}
-    </div>
-  </section>
-
+        <section id="${cat}">
+          <div class="section-header">
+            <h2>${cat.charAt(0).toUpperCase() + cat.slice(1)}</h2>
+            <a href="#" class="view-all">See all ›</a>
+          </div>
+          <div class="category-carousel">
+            ${catGroups.map(createGroupCard).join('')}
+          </div>
+        </section>
       `
     })
 
-    // Any uncategorized
+    // Uncategorized groups
     const otherGroups = groups.filter(g => !CATEGORIES.includes(g.category))
     if (otherGroups.length > 0) {
       html += `
         <section id="other">
           <div class="section-header"><h2>Other</h2></div>
-          <div class="groups-grid">${otherGroups.map(createGroupCard).join('')}</div>
+          <div class="category-carousel">
+            ${otherGroups.map(createGroupCard).join('')}
+          </div>
         </section>
       `
     }
@@ -310,7 +340,6 @@ function setupSubmitForm() {
   const form = document.querySelector('form')
   if (!form) return
 
-  // Custom selects
   document.querySelectorAll('.custom-select').forEach(select => {
     const selected = select.querySelector('.custom-select-selected')
     const options = select.querySelector('.custom-select-options')
@@ -335,7 +364,6 @@ function setupSubmitForm() {
     }
   })
 
-  // Form submit
   form.addEventListener('submit', async (e) => {
     e.preventDefault()
 
@@ -390,6 +418,9 @@ function setupSubmitForm() {
     }
   })
 }
+
+
+// ── STATS ──
 async function loadStats() {
   try {
     const res = await fetch('/api/groups?limit=1000')
@@ -409,6 +440,8 @@ async function loadStats() {
     if (statWhatsapp) statWhatsapp.textContent = whatsapp + '+'
   } catch (e) {}
 }
+
+
 // ── INIT ──
 document.addEventListener('DOMContentLoaded', () => {
   const page = getCurrentPage()
@@ -419,7 +452,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadHomePage()
     loadStats()
     setupCategoryFilter()
-}
+  }
 
   if (page === 'explore') {
     loadExplorePage()
