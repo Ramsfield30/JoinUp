@@ -275,14 +275,15 @@ async function loadExplorePage() {
       const catGroups = byCategory[cat] || []
       if (catGroups.length === 0) return
       html += `
-        <section id="${cat}">
-          <div class="section-header">
-            <h2>${cat.charAt(0).toUpperCase() + cat.slice(1)}</h2>
-          </div>
-          <div class="groups-grid">
-            ${catGroups.map(createGroupCard).join('')}
-          </div>
-        </section>
+  <section id="${cat}">
+    <div class="section-header">
+      <h2>${cat.charAt(0).toUpperCase() + cat.slice(1)}</h2>
+    </div>
+    <div class="groups-grid">
+      ${catGroups.map(createGroupCard).join('')}
+    </div>
+  </section>
+
       `
     })
 
