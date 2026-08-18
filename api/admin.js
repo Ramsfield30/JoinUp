@@ -94,6 +94,18 @@ module.exports = async (req, res) => {
       if (error) throw error
       return res.status(200).json({ success: true, message: `Group ${verified ? 'verified' : 'unverified'}` })
     }
+    // Edit group
+if (action === 'edit' && req.method === 'POST') {
+  const { id, name, description } = req.body
+  const { error } = await supabase
+    .from('groups')
+    .update({ name, description })
+    .eq('id', id)
+  
+  if (error) throw error
+  return res.status(200).json({ success: true, message: 'Group updated' })
+}
+
 
     // Stats
     if (action === 'stats') {

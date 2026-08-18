@@ -53,7 +53,25 @@ function formatMembers(members) {
   return `${members} members`
 }
 
+function toggleDesc(id, fullText) {
+  const el = document.getElementById(`desc-${id}`)
+  const btn = el.nextElementSibling
+  if (el.dataset.expanded === 'true') {
+    el.textContent = fullText.substring(0, 80) + '...'
+    el.dataset.expanded = 'false'
+    btn.textContent = 'Read more'
+  } else {
+    el.textContent = fullText
+    el.dataset.expanded = 'true'
+    btn.textContent = 'Read less'
+  }
+}
+
 function createGroupCard(group) {
+  const desc = group.description || ''
+  const shortDesc = desc.length > 80 ? desc.substring(0, 80) + '...' : desc
+  const hasMore = desc.length > 80
+
   return `
     <div class="group-card">
       <div class="group-card-header">
@@ -63,7 +81,8 @@ function createGroupCard(group) {
         }
         <div class="group-info">
           <h3>${group.name} ${getVerifiedBadge(group.verified)}</h3>
-          <p>${group.description || ''}</p>
+          <p class="group-desc" id="desc-${group.id}" data-expanded="false">${shortDesc}</p>
+          ${hasMore ? `<span class="read-more" onclick="toggleDesc('${group.id}', \`${desc.replace(/`/g, '\\`')}\`)">Read more</span>` : ''}
         </div>
       </div>
       <div class="group-card-footer">
@@ -79,6 +98,9 @@ function createGroupCard(group) {
 }
 
 function createSearchResult(group) {
+  const desc = group.description || ''
+  const shortDesc = desc.length > 100 ? desc.substring(0, 100) + '...' : desc
+
   return `
     <a href="${group.link}" target="_blank" rel="noopener noreferrer" class="search-result-item">
       ${group.image_url
@@ -87,7 +109,7 @@ function createSearchResult(group) {
       }
       <div class="search-result-info">
         <h3>${group.name} ${getVerifiedBadge(group.verified)}</h3>
-        <p>${group.description || ''}</p>
+        <p>${shortDesc}</p>
         <div class="search-result-meta">
           <span class="badge ${group.platform}">${group.platform}</span>
           <span class="category-badge">${group.category}</span>
@@ -157,15 +179,15 @@ async function handleSearch(query) {
       return
     }
 
+    if (trendingContainer) trendingContainer.innerHTML = `<div class="section-header"><h2>Search Results</h2></div>`
     latestContainer.innerHTML = '<div class="search-loading"><div class="spinner"></div> Searching...</div>'
-    if (trendingContainer) trendingContainer.innerHTML = ''
 
     try {
       const groups = await fetchGroups({ search: query })
       if (groups.length === 0) {
         latestContainer.innerHTML = `<div class="empty-state"><i class="fa-solid fa-search"></i><p>No groups found for "<strong>${query}</strong>"</p></div>`
       } else {
-        latestContainer.innerHTML = groups.map(createSearchResult).join('')
+        latestContainer.innerHTML = `<div class="search-results-list">${groups.map(createSearchResult).join('')}</div>`
       }
     } catch (err) {
       latestContainer.innerHTML = '<div class="error-state">Search failed. Try again.</div>'
@@ -315,7 +337,6 @@ async function loadExplorePage() {
       `
     })
 
-    // Uncategorized groups
     const otherGroups = groups.filter(g => !CATEGORIES.includes(g.category))
     if (otherGroups.length > 0) {
       html += `
