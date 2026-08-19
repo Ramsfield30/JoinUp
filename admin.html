@@ -272,6 +272,26 @@
     let adminSecret = ''
     let currentTab = 'pending'
 
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return ''
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;')
+    }
+
+    function safeUrl(url) {
+      try {
+        const parsed = new URL(url, window.location.origin)
+        if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+          return escapeHtml(parsed.href)
+        }
+      } catch (e) {}
+      return '#'
+    }
+
     async function adminLogin() {
       const secret = document.getElementById('secret-input').value.trim()
       if (!secret) return
@@ -336,21 +356,21 @@
 
         container.innerHTML = data.data.map(group => `
           <div class="admin-group-card" id="group-${group.id}">
-            <h3>${group.name}</h3>
-            <p>${group.description || 'No description'}</p>
+            <h3>${escapeHtml(group.name)}</h3>
+            <p>${escapeHtml(group.description) || 'No description'}</p>
             <div class="admin-group-meta">
-              <span>${group.platform}</span>
-              <span>${group.type}</span>
-              <span>${group.category}</span>
-              <span>${group.status}</span>
+              <span>${escapeHtml(group.platform)}</span>
+              <span>${escapeHtml(group.type)}</span>
+              <span>${escapeHtml(group.category)}</span>
+              <span>${escapeHtml(group.status)}</span>
               ${group.featured ? '<span style="color:#FFD700">⭐ Featured</span>' : ''}
               ${group.verified ? '<span style="color:#1DA1F2">✅ Verified</span>' : ''}
-              ${group.members ? '<span>👥 ' + group.members + '</span>' : ''}
+              ${group.members ? '<span>👥 ' + escapeHtml(group.members) + '</span>' : ''}
             </div>
-            <a class="admin-group-link" href="${group.link}" target="_blank">${group.link}</a>
-            ${group.email ? `<p style="font-size:12px;color:rgba(255,255,255,0.4);">📧 ${group.email}</p>` : ''}
+            <a class="admin-group-link" href="${safeUrl(group.link)}" target="_blank">${escapeHtml(group.link)}</a>
+            ${group.email ? `<p style="font-size:12px;color:rgba(255,255,255,0.4);">📧 ${escapeHtml(group.email)}</p>` : ''}
             <div class="admin-actions">
-            <button class="admin-btn" style="background:#6c5ce7;color:white" onclick="editGroup(${group.id}, \`${(group.name || '').replace(/`/g, '\\`')}\`, \`${(group.description || '').replace(/`/g, '\\`')}\`)">✏️ Edit</button>
+            <button class="admin-btn" style="background:#6c5ce7;color:white" data-id="${group.id}" data-name="${escapeHtml(group.name)}" data-description="${escapeHtml(group.description)}" onclick="editGroup(this.dataset.id, this.dataset.name, this.dataset.description)">✏️ Edit</button>
               ${group.status === 'pending' ? `<button class="admin-btn btn-approve" onclick="approveGroup(${group.id})">✅ Approve</button>` : ''}
               <button class="admin-btn btn-reject" onclick="rejectGroup(${group.id})">🗑️ Delete</button>
               <button class="admin-btn btn-feature" onclick="featureGroup(${group.id}, ${!group.featured})">${group.featured ? '⭐ Unfeature' : '⭐ Feature'}</button>

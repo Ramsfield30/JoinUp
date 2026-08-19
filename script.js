@@ -70,6 +70,26 @@ function toggleDesc(id) {
   }
 }
 
+function escapeHtml(str) {
+  if (str === null || str === undefined) return ''
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
+function safeUrl(url) {
+  try {
+    const parsed = new URL(url, window.location.origin)
+    if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+      return escapeHtml(parsed.href)
+    }
+  } catch (e) {}
+  return '#'
+}
+
 function proxiedImage(path) {
   return `/api/image?path=${encodeURIComponent(path)}`
 }
@@ -85,20 +105,20 @@ function createGroupCard(group) {
     <div class="group-card">
       <div class="group-card-header">
         ${group.image_url
-          ? `<img src="${proxiedImage(group.image_url)}" class="group-avatar" alt="${group.name}" onerror="this.style.display='none'">`
+          ? `<img src="${proxiedImage(group.image_url)}" class="group-avatar" alt="${escapeHtml(group.name)}" onerror="this.style.display='none'">`
           : `<div class="group-avatar-placeholder"><i class="fa-solid fa-users"></i></div>`
         }
         <div class="group-info">
-          <h3>${group.name} ${getVerifiedBadge(group.verified)}</h3>
-          <p class="group-desc" id="desc-${group.id}" data-expanded="false">${shortDesc}</p>
+          <h3>${escapeHtml(group.name)} ${getVerifiedBadge(group.verified)}</h3>
+          <p class="group-desc" id="desc-${group.id}" data-expanded="false">${escapeHtml(shortDesc)}</p>
           ${hasMore ? `<span class="read-more" onclick="toggleDesc('${group.id}')">Read more</span>` : ''}
         </div>
       </div>
       <div class="group-card-footer">
         ${getPlatformBadge(group.platform, group.type)}
-        <span class="category-badge">${group.category}</span>
+        <span class="category-badge">${escapeHtml(group.category)}</span>
         ${group.members ? `<span class="members-count"><i class="fa-solid fa-users"></i> ${formatMembers(group.members)}</span>` : ''}
-        <a href="${group.link}" target="_blank" rel="noopener noreferrer" class="join-btn">
+        <a href="${safeUrl(group.link)}" target="_blank" rel="noopener noreferrer" class="join-btn">
           Join ${group.type === 'channel' ? 'Channel' : 'Group'}
         </a>
       </div>
@@ -111,17 +131,17 @@ function createSearchResult(group) {
   const shortDesc = desc.length > 100 ? desc.substring(0, 100) + '...' : desc
 
   return `
-    <a href="${group.link}" target="_blank" rel="noopener noreferrer" class="search-result-item">
+    <a href="${safeUrl(group.link)}" target="_blank" rel="noopener noreferrer" class="search-result-item">
      ${group.image_url
-  ? `<img src="${proxiedImage(group.image_url)}" class="group-avatar" alt="${group.name}" onerror="this.parentNode.innerHTML='<div class=\\'group-avatar-placeholder\\'><i class=\\'fa-solid fa-users\\'></i></div>'">`
+  ? `<img src="${proxiedImage(group.image_url)}" class="group-avatar" alt="${escapeHtml(group.name)}" onerror="this.parentNode.innerHTML='<div class=\\'group-avatar-placeholder\\'><i class=\\'fa-solid fa-users\\'></i></div>'">`
   : `<div class="group-avatar-placeholder"><i class="fa-solid fa-users"></i></div>`
 }
       <div class="search-result-info">
-        <h3>${group.name} ${getVerifiedBadge(group.verified)}</h3>
-        <p>${shortDesc}</p>
+        <h3>${escapeHtml(group.name)} ${getVerifiedBadge(group.verified)}</h3>
+        <p>${escapeHtml(shortDesc)}</p>
         <div class="search-result-meta">
-          <span class="badge ${group.platform}">${group.platform}</span>
-          <span class="category-badge">${group.category}</span>
+          <span class="badge ${escapeHtml(group.platform)}">${escapeHtml(group.platform)}</span>
+          <span class="category-badge">${escapeHtml(group.category)}</span>
           ${group.members ? `<span class="members-count">${formatMembers(group.members)}</span>` : ''}
         </div>
       </div>
