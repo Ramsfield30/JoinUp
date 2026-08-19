@@ -1,4 +1,5 @@
 const { createClient } = require('@supabase/supabase-js')
+const crypto = require('crypto')
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -6,7 +7,13 @@ const supabase = createClient(
 )
 
 const ADMIN_SECRET = process.env.ADMIN_SECRET
-console.log('Secret from env:', process.env.ADMIN_SECRET)
+
+function safeCompare(a, b) {
+  const bufA = Buffer.from(String(a))
+  const bufB = Buffer.from(String(b))
+  if (bufA.length !== bufB.length) return false
+  return crypto.timingSafeEqual(bufA, bufB)
+}
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*')
@@ -17,7 +24,7 @@ module.exports = async (req, res) => {
 
   // Check admin secret
   const secret = req.headers['x-admin-secret']
-  if (!secret || secret !== ADMIN_SECRET) {
+  if (!secret || !safeCompare(secret, ADMIN_SECRET)) {
     return res.status(401).json({ success: false, error: 'Unauthorized' })
   }
 

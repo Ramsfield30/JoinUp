@@ -5,11 +5,28 @@ const supabase = createClient(
   process.env.SUPABASE_KEY
 )
 
+// Commas and parentheses are structural characters in PostgREST's .or() filter syntax —
+// stripping them stops a search term from injecting extra filter conditions.
+function sanitizeSearchTerm(term) {
+  return String(term)
+    .replace(/[,()]/g, '')
+    .slice(0, 100)
+    .trim()
+}
+
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'GET')
 
-  const { category, search, featured, limit = 20, offset = 0 } = req.query
+  const { category, search, featured } = req.query
+
+  // Clamp limit/offset so a crafted request can't force a huge, expensive query.
+  let limit = parseInt(req.query.limit, 10)
+  if (!Number.isFinite(limit) || limit < 1) limit = 20
+  if (limit > 100) limit = 100
+
+  let offset = parseInt(req.query.offset, 10)
+  if (!Number.isFinite(offset) || offset < 0) offset = 0
 
   try {
     let query = supabase
@@ -24,7 +41,10 @@ module.exports = async (req, res) => {
     }
 
     if (search) {
-      query = query.or(`name.ilike.%${search}%,description.ilike.%${search}%`)
+      const safeSearch = sanitizeSearchTerm(search)
+      if (safeSearch) {
+        query = query.or(`name.ilike.%${safeSearch}%,description.ilike.%${safeSearch}%`)
+      }
     }
 
     if (featured === 'true') {
