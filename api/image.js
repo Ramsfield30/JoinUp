@@ -1,7 +1,4 @@
-// Proxies group photos from Telegram without ever exposing the bot token to the client.
-// Groups store a Telegram file_id in `image_url` (file_ids don't expire). On each request
-// this calls getFile to get a fresh, short-lived file_path, then fetches and streams the
-// actual image bytes back. The bot token stays server-side the whole time.
+// TEMPORARY DEBUG VERSION — traces the getFile step to diagnose the failure
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*')
@@ -13,37 +10,45 @@ module.exports = async (req, res) => {
     return res.status(400).json({ success: false, error: 'Missing path' })
   }
 
-  // Telegram file_id only ever contains letters, numbers, and - _
   if (!/^[a-zA-Z0-9_-]+$/.test(path)) {
-    return res.status(400).json({ success: false, error: 'Invalid path' })
+    return res.status(400).json({ success: false, error: 'Invalid path', debug: { path } })
   }
 
   try {
     const token = process.env.JOINUP_BOT_TOKEN
+    const hasToken = !!token
+    const tokenPreview = token ? `${token.slice(0, 6)}...${token.slice(-4)}` : null
 
-    // Step 1: turn the durable file_id into a fresh, temporary file_path
     const getFileRes = await fetch(`https://api.telegram.org/bot${token}/getFile?file_id=${path}`)
     const getFileData = await getFileRes.json()
 
     if (!getFileData.ok) {
-      return res.status(404).json({ success: false, error: 'Image not found' })
+      return res.status(404).json({
+        success: false,
+        error: 'Image not found',
+        debug: { step: 'getFile', hasToken, tokenPreview, getFileStatus: getFileRes.status, getFileData }
+      })
     }
 
-    // Step 2: fetch the actual image bytes using that fresh path
     const telegramUrl = `https://api.telegram.org/file/bot${token}/${getFileData.result.file_path}`
     const response = await fetch(telegramUrl)
 
     if (!response.ok) {
-      return res.status(404).json({ success: false, error: 'Image not found' })
+      const body = await response.text()
+      return res.status(404).json({
+        success: false,
+        error: 'Image not found',
+        debug: { step: 'fileDownload', status: response.status, body, filePath: getFileData.result.file_path }
+      })
     }
 
     const contentType = response.headers.get('content-type') || 'image/jpeg'
     const buffer = Buffer.from(await response.arrayBuffer())
 
     res.setHeader('Content-Type', contentType)
-    res.setHeader('Cache-Control', 'public, max-age=3600') // cache 1hr; file_path itself expires around then anyway
+    res.setHeader('Cache-Control', 'public, max-age=3600')
     res.status(200).send(buffer)
   } catch (err) {
-    res.status(500).json({ success: false, error: 'Failed to load image' })
+    res.status(500).json({ success: false, error: 'Failed to load image', debug: { message: err.message } })
   }
 }
