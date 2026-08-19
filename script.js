@@ -53,15 +53,18 @@ function formatMembers(members) {
   return `${members} members`
 }
 
-function toggleDesc(id, fullText) {
+const groupDescriptions = {}
+
+function toggleDesc(id) {
   const el = document.getElementById(`desc-${id}`)
   const btn = el.nextElementSibling
+  const full = groupDescriptions[id]
   if (el.dataset.expanded === 'true') {
-    el.textContent = fullText.substring(0, 80) + '...'
+    el.textContent = full.substring(0, 80) + '...'
     el.dataset.expanded = 'false'
     btn.textContent = 'Read more'
   } else {
-    el.textContent = fullText
+    el.textContent = full
     el.dataset.expanded = 'true'
     btn.textContent = 'Read less'
   }
@@ -71,6 +74,8 @@ function createGroupCard(group) {
   const desc = group.description || ''
   const shortDesc = desc.length > 80 ? desc.substring(0, 80) + '...' : desc
   const hasMore = desc.length > 80
+
+  if (hasMore) groupDescriptions[group.id] = desc
 
   return `
     <div class="group-card">
@@ -82,7 +87,7 @@ function createGroupCard(group) {
         <div class="group-info">
           <h3>${group.name} ${getVerifiedBadge(group.verified)}</h3>
           <p class="group-desc" id="desc-${group.id}" data-expanded="false">${shortDesc}</p>
-          ${hasMore ? `<span class="read-more" onclick="toggleDesc('${group.id}', \`${desc.replace(/`/g, '\\`')}\`)">Read more</span>` : ''}
+          ${hasMore ? `<span class="read-more" onclick="toggleDesc('${group.id}')">Read more</span>` : ''}
         </div>
       </div>
       <div class="group-card-footer">
@@ -103,10 +108,10 @@ function createSearchResult(group) {
 
   return `
     <a href="${group.link}" target="_blank" rel="noopener noreferrer" class="search-result-item">
-      ${group.image_url
-        ? `<img src="${group.image_url}" class="search-result-avatar" alt="${group.name}" onerror="this.style.display='none'">`
-        : `<div class="search-result-avatar-placeholder"><i class="fa-solid fa-users"></i></div>`
-      }
+     ${group.image_url
+  ? `<img src="${group.image_url}" class="group-avatar" alt="${group.name}" onerror="this.parentNode.innerHTML='<div class=\\'group-avatar-placeholder\\'><i class=\\'fa-solid fa-users\\'></i></div>'">`
+  : `<div class="group-avatar-placeholder"><i class="fa-solid fa-users"></i></div>`
+}
       <div class="search-result-info">
         <h3>${group.name} ${getVerifiedBadge(group.verified)}</h3>
         <p>${shortDesc}</p>

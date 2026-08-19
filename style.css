@@ -1278,7 +1278,7 @@ html {
     display: flex;
     align-items: center;
     gap: 6px;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     overflow: hidden;
     margin-top: auto;
     padding-top: 10px;
@@ -1489,9 +1489,11 @@ html {
 .category-carousel::-webkit-scrollbar { display: none; }
 
 .category-carousel .group-card {
-    min-width: 200px;
-    max-width: 200px;
+    min-width: 220px;
+    max-width: 220px;
     flex-shrink: 0;
+    height: auto;
+    min-height: 160px;
 }
 
 /* ── SEARCH RESULTS LIST ── */
