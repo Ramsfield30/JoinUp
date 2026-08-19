@@ -70,6 +70,10 @@ function toggleDesc(id) {
   }
 }
 
+function proxiedImage(path) {
+  return `/api/image?path=${encodeURIComponent(path)}`
+}
+
 function createGroupCard(group) {
   const desc = group.description || ''
   const shortDesc = desc.length > 80 ? desc.substring(0, 80) + '...' : desc
@@ -81,7 +85,7 @@ function createGroupCard(group) {
     <div class="group-card">
       <div class="group-card-header">
         ${group.image_url
-          ? `<img src="${group.image_url}" class="group-avatar" alt="${group.name}" onerror="this.style.display='none'">`
+          ? `<img src="${proxiedImage(group.image_url)}" class="group-avatar" alt="${group.name}" onerror="this.style.display='none'">`
           : `<div class="group-avatar-placeholder"><i class="fa-solid fa-users"></i></div>`
         }
         <div class="group-info">
@@ -109,7 +113,7 @@ function createSearchResult(group) {
   return `
     <a href="${group.link}" target="_blank" rel="noopener noreferrer" class="search-result-item">
      ${group.image_url
-  ? `<img src="${group.image_url}" class="group-avatar" alt="${group.name}" onerror="this.parentNode.innerHTML='<div class=\\'group-avatar-placeholder\\'><i class=\\'fa-solid fa-users\\'></i></div>'">`
+  ? `<img src="${proxiedImage(group.image_url)}" class="group-avatar" alt="${group.name}" onerror="this.parentNode.innerHTML='<div class=\\'group-avatar-placeholder\\'><i class=\\'fa-solid fa-users\\'></i></div>'">`
   : `<div class="group-avatar-placeholder"><i class="fa-solid fa-users"></i></div>`
 }
       <div class="search-result-info">
