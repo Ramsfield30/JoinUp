@@ -1,3 +1,7 @@
+// Proxies group photos from Telegram without ever exposing the bot token to the client.
+// Groups store only the Telegram file_path in `image_url`; this endpoint turns that
+// into a real image using the token, which stays in this server-side env var.
+
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'GET')
@@ -21,7 +25,8 @@ module.exports = async (req, res) => {
     const response = await fetch(telegramUrl)
 
     if (!response.ok) {
-      return res.status(404).json({ success: false, error: 'Image not found' })
+      const body = await response.text()
+      return res.status(404).json({ success: false, error: 'Image not found', debug: { status: response.status, body } })
     }
 
     const contentType = response.headers.get('content-type') || 'image/jpeg'
