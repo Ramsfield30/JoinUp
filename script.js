@@ -429,7 +429,7 @@ function setupSubmitForm() {
       type: document.getElementById('type-value')?.value,
       category: document.getElementById('category-value')?.value,
       description: form.querySelector('[name="description"]')?.value?.trim(),
-      link: form.querySelector('[name="link"]')?.value?.trim(),
+      link: form.querySelector('[name="group-link"]')?.value?.trim(),
       members: form.querySelector('[name="members"]')?.value?.trim(),
       email: form.querySelector('[name="email"]')?.value?.trim()
     }
