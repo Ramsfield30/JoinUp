@@ -53,18 +53,14 @@ function formatMembers(members) {
   return `${members} members`
 }
 
-const groupDescriptions = {}
-
-function toggleDesc(id) {
-  const el = document.getElementById(`desc-${id}`)
-  const btn = el.nextElementSibling
-  const full = groupDescriptions[id]
+function toggleDesc(btn) {
+  const el = btn.previousElementSibling
   if (el.dataset.expanded === 'true') {
-    el.textContent = full.substring(0, 80) + '...'
+    el.textContent = el.dataset.short
     el.dataset.expanded = 'false'
     btn.textContent = 'Read more'
   } else {
-    el.textContent = full
+    el.textContent = el.dataset.full
     el.dataset.expanded = 'true'
     btn.textContent = 'Read less'
   }
@@ -99,8 +95,6 @@ function createGroupCard(group) {
   const shortDesc = desc.length > 80 ? desc.substring(0, 80) + '...' : desc
   const hasMore = desc.length > 80
 
-  if (hasMore) groupDescriptions[group.id] = desc
-
   return `
     <div class="group-card">
       <div class="group-card-header">
@@ -110,8 +104,8 @@ function createGroupCard(group) {
         }
         <div class="group-info">
           <h3>${escapeHtml(group.name)} ${getVerifiedBadge(group.verified)}</h3>
-          <p class="group-desc" id="desc-${group.id}" data-expanded="false">${escapeHtml(shortDesc)}</p>
-          ${hasMore ? `<span class="read-more" onclick="toggleDesc('${group.id}')">Read more</span>` : ''}
+          <p class="group-desc" data-expanded="false" data-short="${escapeHtml(shortDesc)}" data-full="${escapeHtml(desc)}">${escapeHtml(shortDesc)}</p>
+          ${hasMore ? `<span class="read-more" onclick="toggleDesc(this)">Read more</span>` : ''}
         </div>
       </div>
       <div class="group-card-footer">
