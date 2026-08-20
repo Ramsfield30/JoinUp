@@ -657,6 +657,32 @@ header nav a.active {
     line-height: 1.5;
 }
 
+.bot-alt-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    max-width: fit-content;
+    margin: 0 auto 24px;
+    padding: 10px 18px;
+    background: rgba(0, 136, 204, 0.1);
+    border: 1px solid rgba(0, 136, 204, 0.3);
+    border-radius: 20px;
+    color: #0088cc;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.bot-alt-link:hover {
+    background: rgba(0, 136, 204, 0.18);
+}
+
+.bot-alt-link i {
+    font-size: 15px;
+}
+
 .submit-form-btn {
     display: block;
     width: 80%;
@@ -807,6 +833,12 @@ header nav a.active {
     color: gray;
     font-size: 12px;
     margin: 5px 0;
+}
+
+.policy-notes p i {
+    width: 14px;
+    margin-right: 6px;
+    color: #6c5ce7;
 }
 
 @keyframes fadeIn {
@@ -1585,4 +1617,3 @@ html {
     margin-top: 4px;
 }
 
-.read-more:hover { text-decoration: underline; }
