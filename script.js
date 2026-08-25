@@ -128,6 +128,31 @@ async function shareGroup(btn) {
   }
 }
 
+async function reportLink(btn, groupId) {
+  if (btn.disabled) return
+  const confirmed = confirm('Report this link as broken or wrong? We\'ll take a look.')
+  if (!confirmed) return
+
+  btn.disabled = true
+  try {
+    const res = await fetch('/api/report-link', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ group_id: groupId })
+    })
+    const result = await res.json()
+    const icon = btn.querySelector('i')
+    if (result.success) {
+      icon.className = 'fa-solid fa-check'
+      btn.title = 'Reported — thanks!'
+    } else {
+      btn.disabled = false
+    }
+  } catch (e) {
+    btn.disabled = false
+  }
+}
+
 function createGroupCard(group) {
   const desc = stripAdNoise(group.description || '')
   const shortDesc = desc.length > 80 ? desc.substring(0, 80) + '...' : desc
@@ -154,6 +179,9 @@ function createGroupCard(group) {
         ${group.members ? `<span class="members-count"><i class="fa-solid fa-users"></i> ${formatMembers(group.members)}</span>` : ''}
         <button type="button" class="share-btn" onclick="shareGroup(this)" data-name="${escapeHtml(group.name)}" data-link="${safeUrl(group.link)}" aria-label="Share">
           <i class="fa-solid fa-share-nodes"></i>
+        </button>
+        <button type="button" class="report-btn" onclick="reportLink(this, ${group.id})" aria-label="Report broken link" title="Report broken link">
+          <i class="fa-solid fa-flag"></i>
         </button>
         <a href="${safeUrl(group.link)}" target="_blank" rel="noopener noreferrer" class="join-btn">
           Join ${group.type === 'channel' ? 'Channel' : 'Group'}
@@ -553,14 +581,18 @@ async function loadStats() {
     const total = data.data.length
     const telegram = data.data.filter(g => g.platform === 'telegram').length
     const whatsapp = data.data.filter(g => g.platform === 'whatsapp').length
+    const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000
+    const thisWeek = data.data.filter(g => g.created_at && new Date(g.created_at).getTime() > weekAgo).length
 
     const statTotal = document.getElementById('stat-total')
     const statTelegram = document.getElementById('stat-telegram')
     const statWhatsapp = document.getElementById('stat-whatsapp')
+    const statWeek = document.getElementById('stat-week')
 
     if (statTotal) statTotal.textContent = total + '+'
     if (statTelegram) statTelegram.textContent = telegram + '+'
     if (statWhatsapp) statWhatsapp.textContent = whatsapp + '+'
+    if (statWeek) statWeek.textContent = thisWeek
   } catch (e) {}
 }
 
@@ -584,4 +616,3 @@ document.addEventListener('DOMContentLoaded', () => {
   if (page === 'submit') {
     setupSubmitForm()
   }
-})
