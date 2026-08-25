@@ -1236,6 +1236,22 @@ html {
     min-height: 140px;
     width: 100%;
     box-sizing: border-box;
+    position: relative;
+}
+
+.new-badge {
+    position: absolute;
+    top: -6px;
+    right: 12px;
+    background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+    color: white;
+    font-size: 9px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 6px;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 6px rgba(108,92,231,0.4);
+    z-index: 1;
 }
 
 .group-card:hover {

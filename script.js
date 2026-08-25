@@ -124,9 +124,11 @@ function createGroupCard(group) {
   const desc = group.description || ''
   const shortDesc = desc.length > 80 ? desc.substring(0, 80) + '...' : desc
   const hasMore = desc.length > 80
+  const isNew = group.created_at && (Date.now() - new Date(group.created_at).getTime()) < 7 * 24 * 60 * 60 * 1000
 
   return `
     <div class="group-card">
+      ${isNew ? `<span class="new-badge">NEW</span>` : ''}
       <div class="group-card-header">
         ${group.image_url
           ? `<img src="${proxiedImage(group.image_url)}" class="group-avatar" alt="${escapeHtml(group.name)}" onerror="this.style.display='none'">`
