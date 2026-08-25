@@ -616,3 +616,4 @@ document.addEventListener('DOMContentLoaded', () => {
   if (page === 'submit') {
     setupSubmitForm()
   }
+})
