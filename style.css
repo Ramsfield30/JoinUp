@@ -1046,7 +1046,6 @@ html {
     width: 100%;
     margin-bottom: 15px;
 }
-
 .custom-select-selected {
     padding: 12px 15px;
     border-radius: 10px;
@@ -1241,8 +1240,8 @@ html {
 
 .new-badge {
     position: absolute;
-    top: -6px;
-    right: 12px;
+    top: 8px;
+    right: 8px;
     background: linear-gradient(135deg, #6c5ce7, #a29bfe);
     color: white;
     font-size: 9px;
@@ -1662,3 +1661,4 @@ html {
     margin-top: 4px;
 }
 
+.read-more:hover { text-decoration: underline; }

@@ -86,6 +86,14 @@ function safeUrl(url) {
   return '#'
 }
 
+// Cuts off promotional/ad-disclosure text that sometimes ends up in a
+// group's description (e.g. "...Paid ads by: XYZ"), keeping only the
+// genuine part of the description.
+function stripAdNoise(text) {
+  if (!text) return ''
+  return text.split(/paid ads? by\b|sponsored\s*(message|post)?:?\b|advertisement:?\b/i)[0].trim()
+}
+
 function proxiedImage(path) {
   return `/api/image?path=${encodeURIComponent(path)}`
 }
@@ -121,7 +129,7 @@ async function shareGroup(btn) {
 }
 
 function createGroupCard(group) {
-  const desc = group.description || ''
+  const desc = stripAdNoise(group.description || '')
   const shortDesc = desc.length > 80 ? desc.substring(0, 80) + '...' : desc
   const hasMore = desc.length > 80
   const isNew = group.created_at && (Date.now() - new Date(group.created_at).getTime()) < 7 * 24 * 60 * 60 * 1000
@@ -156,7 +164,7 @@ function createGroupCard(group) {
 }
 
 function createSearchResult(group) {
-  const desc = group.description || ''
+  const desc = stripAdNoise(group.description || '')
   const shortDesc = desc.length > 100 ? desc.substring(0, 100) + '...' : desc
 
   return `
@@ -576,4 +584,3 @@ document.addEventListener('DOMContentLoaded', () => {
   if (page === 'submit') {
     setupSubmitForm()
   }
-})
