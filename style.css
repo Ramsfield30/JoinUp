@@ -1360,6 +1360,35 @@ html {
     opacity: 0.85;
 }
 
+.share-btn {
+    margin-left: auto;
+    background: var(--card-bg, rgba(255,255,255,0.06));
+    border: 1px solid var(--border, rgba(255,255,255,0.12));
+    color: inherit;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: opacity 0.2s, transform 0.15s;
+}
+
+.share-btn:hover {
+    opacity: 0.85;
+}
+
+.share-btn:active {
+    transform: scale(0.92);
+}
+
+.share-btn + .join-btn {
+    margin-left: 6px;
+}
+
 .groups-grid {
     display: grid;
     grid-template-columns: 1fr;

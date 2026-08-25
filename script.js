@@ -90,6 +90,36 @@ function proxiedImage(path) {
   return `/api/image?path=${encodeURIComponent(path)}`
 }
 
+async function shareGroup(btn) {
+  const name = btn.dataset.name
+  const link = btn.dataset.link
+  const shareData = {
+    title: name,
+    text: `Check out "${name}" on JoinUp!`,
+    url: link
+  }
+
+  if (navigator.share) {
+    try {
+      await navigator.share(shareData)
+    } catch (e) {
+      // user cancelled the share sheet — not an error, do nothing
+    }
+    return
+  }
+
+  // Fallback for browsers without native share support (mostly desktop)
+  try {
+    await navigator.clipboard.writeText(link)
+    const icon = btn.querySelector('i')
+    const original = icon.className
+    icon.className = 'fa-solid fa-check'
+    setTimeout(() => { icon.className = original }, 1500)
+  } catch (e) {
+    // clipboard access blocked — silently do nothing rather than error out
+  }
+}
+
 function createGroupCard(group) {
   const desc = group.description || ''
   const shortDesc = desc.length > 80 ? desc.substring(0, 80) + '...' : desc
@@ -112,6 +142,9 @@ function createGroupCard(group) {
         ${getPlatformBadge(group.platform, group.type)}
         <span class="category-badge">${escapeHtml(group.category)}</span>
         ${group.members ? `<span class="members-count"><i class="fa-solid fa-users"></i> ${formatMembers(group.members)}</span>` : ''}
+        <button type="button" class="share-btn" onclick="shareGroup(this)" data-name="${escapeHtml(group.name)}" data-link="${safeUrl(group.link)}" aria-label="Share">
+          <i class="fa-solid fa-share-nodes"></i>
+        </button>
         <a href="${safeUrl(group.link)}" target="_blank" rel="noopener noreferrer" class="join-btn">
           Join ${group.type === 'channel' ? 'Channel' : 'Group'}
         </a>
@@ -384,6 +417,8 @@ function setupSubmitForm() {
   const form = document.querySelector('form')
   if (!form) return
 
+  let categoryManuallySet = false
+
   document.querySelectorAll('.custom-select').forEach(select => {
     const selected = select.querySelector('.custom-select-selected')
     const options = select.querySelector('.custom-select-options')
@@ -398,9 +433,43 @@ function setupSubmitForm() {
         const hiddenInput = document.getElementById(select.id.replace('-select', '-value'))
         if (hiddenInput) hiddenInput.value = option.getAttribute('data-value')
         options.classList.remove('open')
+        if (select.id === 'category-select') categoryManuallySet = true
       })
     })
   })
+
+  // ── AI category suggestion ──
+  const nameInput = form.querySelector('[name="group-name"]')
+  const descInput = form.querySelector('[name="description"]')
+  const categorySelected = document.querySelector('#category-select .custom-select-selected')
+  const categoryHidden = document.getElementById('category-value')
+
+  async function trySuggestCategory() {
+    if (categoryManuallySet) return
+    const name = nameInput?.value?.trim()
+    const description = descInput?.value?.trim()
+    if (!name || !description || description.length < 30) return
+
+    try {
+      const res = await fetch('/api/suggest-category', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, description })
+      })
+      const result = await res.json()
+      if (result.success && result.category && !categoryManuallySet && categorySelected && categoryHidden) {
+        const option = document.querySelector(`#category-select .custom-option[data-value="${result.category}"]`)
+        if (option) {
+          categorySelected.innerHTML = `${escapeHtml(option.textContent)} <span style="color:#6c5ce7;font-size:11px;">(AI suggested — tap to change)</span>`
+          categoryHidden.value = result.category
+        }
+      }
+    } catch (e) {
+      // silent — suggestion is optional, form works fine without it
+    }
+  }
+
+  if (descInput) descInput.addEventListener('blur', trySuggestCategory)
 
   document.addEventListener('click', (e) => {
     if (!e.target.closest('.custom-select')) {
